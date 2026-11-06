@@ -659,6 +659,17 @@
   }
 }
 
+/* LeetCode badges — official-style 3D flip around the vertical axis
+   (face → edge-on → back → edge-on → face, matching LeetCode's badge GIF) */
+@keyframes badge-flip {
+  from {
+    transform: perspective(700px) rotateY(0deg);
+  }
+  to {
+    transform: perspective(700px) rotateY(360deg);
+  }
+}
+
 /* Atmospheric cloud drift keyframes */
 @keyframes cloud-drift-1 {
   0% {

@@ -1,8 +1,8 @@
-import { useCallback, useEffect, useState, type CSSProperties } from "react";
+import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ArrowLeft, ArrowRight, ArrowUpRight, CheckCircle2 } from "lucide-react";
 import SectionHeading from "./SectionHeading";
-import ProjectVisual from "./ProjectVisuals";
+import ProjectVisual, { STREAM_DEPARTMENTS } from "./ProjectVisuals";
 import { projects, type Project } from "../data/projects";
 import { GitHubIcon } from "./icons/BrandIcons";
 import { EASE } from "../lib/motion";
@@ -22,6 +22,27 @@ function FeaturedProjectSlide({
   onMouseLeave?: () => void;
 }) {
   const t = project.theme;
+  /* In-place live demo for projects flagged `liveDemo` — the panel never grows,
+     the caption row swaps for the controls instead. */
+  const supportsDemo = Boolean(project.liveDemo);
+  const [demoOn, setDemoOn] = useState(false);
+  const [picked, setPicked] = useState<string | null>(null);
+  const visualRef = useRef<HTMLDivElement>(null);
+
+  const toggleDemo = () => {
+    setDemoOn((on) => {
+      const next = !on;
+      if (!next) setPicked(null);
+      if (next && window.matchMedia("(max-width: 1023px)").matches) {
+        visualRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+      return next;
+    });
+  };
+
+  const readout = picked
+    ? `→ get("${picked}") = ${STREAM_DEPARTMENTS.find((d) => d.label === picked)?.val ?? "0"} records`
+    : `→ {${STREAM_DEPARTMENTS.map((d) => `${d.label}=${d.val}`).join(", ")}}`;
 
   return (
     <article
@@ -56,13 +77,77 @@ function FeaturedProjectSlide({
               </span>
             </div>
 
-            <div className="flex flex-1 items-center justify-center py-2">
-              <ProjectVisual variant={project.visual} accent={project.accent} />
+            <div ref={visualRef} className="flex flex-1 items-center justify-center py-2">
+              <ProjectVisual
+                variant={project.visual}
+                accent={project.accent}
+                interactive={supportsDemo && demoOn}
+                selected={supportsDemo && demoOn ? picked : null}
+                onSelect={setPicked}
+              />
             </div>
 
-            <p className="mt-3 border-t border-line pt-3 font-mono text-[11px] leading-relaxed tracking-[0.08em] text-muted">
-              {project.visualCaption}
-            </p>
+            {/* Caption row — swaps for live-demo controls at identical height */}
+            {supportsDemo && demoOn ? (
+              <div
+                className="mt-3 flex flex-wrap items-center justify-between gap-x-3 gap-y-1.5 border-t border-line pt-3"
+                style={
+                  {
+                    "--accent-text": t.badgeText,
+                    "--accent-bg": t.badgeBg,
+                  } as CSSProperties
+                }
+              >
+                <div
+                  className="flex flex-wrap items-center gap-1.5"
+                  role="group"
+                  aria-label="Live demo — inspect a department"
+                >
+                  <button
+                    type="button"
+                    onClick={() => setPicked(null)}
+                    aria-pressed={picked === null}
+                    data-cursor="link"
+                    className={`rounded-full border px-2.5 py-1 font-mono text-[10px] font-semibold tracking-[0.14em] uppercase transition-all duration-200 ${
+                      picked === null
+                        ? "accent-tint accent-text"
+                        : "border-line bg-surface-2 text-muted hover:text-ink"
+                    }`}
+                  >
+                    all
+                  </button>
+                  {STREAM_DEPARTMENTS.map((d) => {
+                    const active = picked === d.label;
+                    return (
+                      <button
+                        key={d.label}
+                        type="button"
+                        onClick={() => setPicked(active ? null : d.label)}
+                        aria-pressed={active}
+                        data-cursor="link"
+                        className={`rounded-full border px-2.5 py-1 font-mono text-[10px] font-semibold tracking-[0.14em] uppercase transition-all duration-200 ${
+                          active
+                            ? "accent-tint accent-text"
+                            : "border-line bg-surface-2 text-muted hover:text-ink"
+                        }`}
+                      >
+                        {d.label}
+                      </button>
+                    );
+                  })}
+                </div>
+                <p
+                  className="min-w-0 flex-1 truncate text-right font-mono text-[11px] tracking-[0.06em] text-muted"
+                  aria-live="polite"
+                >
+                  {readout}
+                </p>
+              </div>
+            ) : (
+              <p className="mt-3 border-t border-line pt-3 font-mono text-[11px] leading-relaxed tracking-[0.08em] text-muted">
+                {project.visualCaption}
+              </p>
+            )}
           </div>
         </div>
 
@@ -165,33 +250,57 @@ function FeaturedProjectSlide({
                 </a>
               ) : null}
 
-              <a
-                href={project.demo ?? project.repo}
-                target="_blank"
-                rel="noreferrer noopener"
-                data-cursor="open"
-                className="accent-text inline-flex items-center justify-center gap-2 rounded-full border px-5 py-3 text-[13px] font-semibold transition-all duration-200 hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-                style={
-                  {
-                    "--accent-text": "#38BDF8",
-                    backgroundColor: "rgba(36, 150, 237, 0.12)",
-                    borderColor: "rgba(36, 150, 237, 0.45)",
-                  } as CSSProperties
-                }
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = "rgba(36, 150, 237, 0.24)";
-                  e.currentTarget.style.borderColor = "#2496ED";
-                  e.currentTarget.style.boxShadow = "0 0 24px -6px rgba(36, 150, 237, 0.6)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = "rgba(36, 150, 237, 0.12)";
-                  e.currentTarget.style.borderColor = "rgba(36, 150, 237, 0.45)";
-                  e.currentTarget.style.boxShadow = "none";
-                }}
-              >
-                Explore System
-                <ArrowUpRight className="size-4" />
-              </a>
+              {supportsDemo ? (
+                <button
+                  type="button"
+                  onClick={toggleDemo}
+                  aria-pressed={demoOn}
+                  data-cursor="link"
+                  className={`accent-text inline-flex items-center justify-center gap-2 rounded-full border px-5 py-3 text-[13px] font-semibold transition-all duration-200 hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ${
+                    demoOn
+                      ? "border-[#2496ED] bg-[#2496ED]/25 shadow-[0_0_24px_-6px_rgba(36,150,237,0.6)]"
+                      : "border-[rgba(36,150,237,0.45)] bg-[rgba(36,150,237,0.12)] hover:border-[#2496ED] hover:bg-[rgba(36,150,237,0.24)] hover:shadow-[0_0_24px_-6px_rgba(36,150,237,0.6)]"
+                  }`}
+                  style={{ "--accent-text": "#38BDF8" } as CSSProperties}
+                >
+                  {demoOn ? (
+                    <span
+                      className="size-1.5 rounded-full bg-[#38BDF8] shadow-[0_0_8px_#38BDF8]"
+                      aria-hidden
+                    />
+                  ) : null}
+                  Live Demo
+                  {demoOn ? null : <ArrowUpRight className="size-4" />}
+                </button>
+              ) : (
+                <a
+                  href={project.demo ?? project.repo}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  data-cursor="open"
+                  className="accent-text inline-flex items-center justify-center gap-2 rounded-full border px-5 py-3 text-[13px] font-semibold transition-all duration-200 hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                  style={
+                    {
+                      "--accent-text": "#38BDF8",
+                      backgroundColor: "rgba(36, 150, 237, 0.12)",
+                      borderColor: "rgba(36, 150, 237, 0.45)",
+                    } as CSSProperties
+                  }
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = "rgba(36, 150, 237, 0.24)";
+                    e.currentTarget.style.borderColor = "#2496ED";
+                    e.currentTarget.style.boxShadow = "0 0 24px -6px rgba(36, 150, 237, 0.6)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = "rgba(36, 150, 237, 0.12)";
+                    e.currentTarget.style.borderColor = "rgba(36, 150, 237, 0.45)";
+                    e.currentTarget.style.boxShadow = "none";
+                  }}
+                >
+                  Explore System
+                  <ArrowUpRight className="size-4" />
+                </a>
+              )}
             </div>
           </div>
         </div>

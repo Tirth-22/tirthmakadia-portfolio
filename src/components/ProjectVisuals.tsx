@@ -204,14 +204,30 @@ function CloudWise({ c }: { c: string }) {
   );
 }
 
+/** Department leaves for the Stream grouping pipeline — shared with the demo controls. */
+export const STREAM_DEPARTMENTS = [
+  { label: "ENG", x: 60, fillWidth: 42, trackWidth: 54, val: "74" },
+  { label: "OPS", x: 140, fillWidth: 20, trackWidth: 54, val: "32" },
+  { label: "SALES", x: 220, fillWidth: 50, trackWidth: 54, val: "88" },
+  { label: "HR", x: 300, fillWidth: 16, trackWidth: 54, val: "26" },
+];
+
 /** 03 — StreamAPI Grouping Utility: .stream() → groupingBy(dept) & collectingAndThen() → leaves with animated metrics. */
-function Stream({ c }: { c: string }) {
-  const categories = [
-    { label: "ENG", x: 60, fillWidth: 42, trackWidth: 54, val: "74" },
-    { label: "OPS", x: 140, fillWidth: 20, trackWidth: 54, val: "32" },
-    { label: "SALES", x: 220, fillWidth: 50, trackWidth: 54, val: "88" },
-    { label: "HR", x: 300, fillWidth: 16, trackWidth: 54, val: "26" },
-  ];
+function Stream({
+  c,
+  interactive = false,
+  selected = null,
+  onSelect,
+}: {
+  c: string;
+  interactive?: boolean;
+  selected?: string | null;
+  onSelect?: (label: string | null) => void;
+}) {
+  const categories = STREAM_DEPARTMENTS;
+  const inspected = categories.find((d) => d.label === selected) ?? null;
+  const isDim = (label: string) => interactive && !!selected && selected !== label;
+  const isSel = (label: string) => interactive && selected === label;
 
   return (
     <g>
@@ -339,8 +355,45 @@ function Stream({ c }: { c: string }) {
       {/* 4 Category Leaves + Progress / Volume Bars */}
       {categories.map((cat, idx) => {
         const cx = cat.x + 27;
+        const selectedHere = isSel(cat.label);
+        const dimmed = isDim(cat.label);
         return (
-          <g key={cat.label}>
+          <g
+            key={cat.label}
+            data-cursor={interactive ? "link" : undefined}
+            style={{
+              cursor: interactive ? "pointer" : undefined,
+              opacity: dimmed ? 0.28 : 1,
+              transition: "opacity 300ms ease",
+            }}
+            onClick={
+              interactive && onSelect
+                ? () => onSelect(selected === cat.label ? null : cat.label)
+                : undefined
+            }
+          >
+            {/* Pulsing inspection ring on the selected department */}
+            {selectedHere && (
+              <rect
+                x={cat.x - 4}
+                y="154"
+                width="62"
+                height="46"
+                rx="10"
+                fill="none"
+                stroke={c}
+                strokeWidth="1"
+                strokeDasharray="3 3"
+              >
+                <animate
+                  attributeName="opacity"
+                  values="0.3;1;0.3"
+                  dur="1.6s"
+                  repeatCount="indefinite"
+                />
+              </rect>
+            )}
+
             {/* Category Card */}
             <rect
               x={cat.x}
@@ -349,8 +402,9 @@ function Stream({ c }: { c: string }) {
               height="24"
               rx="7"
               fill={CARD}
-              stroke={LINE}
-              strokeWidth="1"
+              stroke={selectedHere ? c : LINE}
+              strokeWidth={selectedHere ? 1.5 : 1}
+              style={selectedHere ? { filter: `drop-shadow(0 0 8px ${c}66)` } : undefined}
             />
             <text
               x={cx}
@@ -382,7 +436,7 @@ function Stream({ c }: { c: string }) {
               height="7"
               rx="3.5"
               fill={c}
-              fillOpacity="0.85"
+              fillOpacity={selectedHere ? 1 : 0.85}
               style={{ filter: `drop-shadow(0 0 4px ${c}88)` }}
             >
               <animate
@@ -398,7 +452,8 @@ function Stream({ c }: { c: string }) {
               x={cat.x + cat.trackWidth + 6}
               y="196"
               fontSize="7"
-              fill={MUTED}
+              fill={selectedHere ? c : MUTED}
+              fontWeight={selectedHere ? 600 : 400}
               fontFamily="var(--font-mono)"
             >
               {cat.val}
@@ -406,6 +461,25 @@ function Stream({ c }: { c: string }) {
           </g>
         );
       })}
+
+      {/* Live demo readout — hint at rest, grouped result while inspecting */}
+      {interactive && (
+        <text
+          x="200"
+          y="224"
+          textAnchor="middle"
+          fontSize="7.2"
+          fontFamily="var(--font-mono)"
+          letterSpacing="1"
+          fill={inspected ? undefined : FAINT}
+          className={inspected ? "accent-fill" : undefined}
+          style={inspected ? ({ "--accent-text": c } as CSSProperties) : undefined}
+        >
+          {inspected
+            ? `groupingBy(dept).get("${inspected.label}") → ${inspected.val} records`
+            : "CLICK A DEPARTMENT TO INSPECT ITS GROUP"}
+        </text>
+      )}
     </g>
   );
 }
@@ -568,9 +642,15 @@ function Formation({ c }: { c: string }) {
 export default function ProjectVisual({
   variant,
   accent,
+  interactive = false,
+  selected = null,
+  onSelect,
 }: {
   variant: Project["visual"];
   accent: Project["accent"];
+  interactive?: boolean;
+  selected?: string | null;
+  onSelect?: (label: string | null) => void;
 }) {
   const c = ACCENT[accent] ?? "#10B981";
 
@@ -588,7 +668,9 @@ export default function ProjectVisual({
 
         {variant === "exchange" && <Exchange c={c} />}
         {variant === "cloudwise" && <CloudWise c={c} />}
-        {variant === "stream" && <Stream c={c} />}
+        {variant === "stream" && (
+          <Stream c={c} interactive={interactive} selected={selected} onSelect={onSelect} />
+        )}
         {variant === "formation" && <Formation c={c} />}
       </svg>
     </div>

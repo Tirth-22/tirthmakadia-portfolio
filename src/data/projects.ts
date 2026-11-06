@@ -10,6 +10,8 @@ export type Project = {
   repo: string;
   /** Optional deployed demo — falls back to repo if unset */
   demo?: string;
+  /** Renders an in-place interactive demo panel instead of an external demo link */
+  liveDemo?: boolean;
   visualCaption: string;
   visual: "exchange" | "cloudwise" | "stream" | "formation";
   accent: "blue" | "amber" | "cyan" | "emerald";
@@ -97,6 +99,7 @@ export const projects: Project[] = [
     stack: ["Java 21", "Streams", "Collectors", "JUnit", "JMH"],
     repo: "https://github.com/Tirth-22/StreamAPI-grouping-utility",
     demo: "https://github.com/Tirth-22/StreamAPI-grouping-utility",
+    liveDemo: true,
     visualCaption: "Hierarchical Stream API grouping pipeline",
     visual: "stream",
     accent: "cyan",

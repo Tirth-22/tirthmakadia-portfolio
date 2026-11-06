@@ -60,6 +60,12 @@ const LEETCODE_CONCEPTS = [
   { label: "Divide &\nConquer", cx: 215, cy: 186, r: 16 },
 ];
 
+/* Profile badges earned on LeetCode — shown under the language list */
+const LEETCODE_BADGES = [
+  { days: 100, year: 2025 },
+  { days: 50, year: 2025 },
+];
+
 function StatCard({
   icon: Icon,
   label,
@@ -487,8 +493,8 @@ export default function Metrics() {
           </div>
 
           {/* --------------------------------- Repository Languages Card */}
-          <div className="panel min-w-0 rounded-2xl border border-line bg-surface p-5 md:p-6 lg:col-span-5 flex flex-col justify-between h-full">
-            <div>
+          <div className="panel min-w-0 rounded-2xl border border-line bg-surface p-5 md:p-6 lg:col-span-5 flex flex-col h-full">
+            <div className="flex flex-1 flex-col">
               <p className="mb-1.5 font-mono text-[10px] tracking-[0.18em] text-muted uppercase">
                 Repository Languages
               </p>
@@ -526,59 +532,30 @@ export default function Metrics() {
                 )}
               </div>
 
-              {/* GitHub Quick Stats — fills remaining space */}
-              <div className="mt-6 grid grid-cols-2 gap-2.5 border-t border-line pt-5">
-                <div className="rounded-lg border border-line bg-surface-2/50 px-3 py-2.5">
-                  <p className="font-mono text-[9px] tracking-[0.14em] text-faint uppercase">
-                    Public Repos
-                  </p>
-                  <p className="mt-1 font-sans text-[17px] font-bold tracking-tight text-ink">
-                    <Counter key={gh.publicRepos || gh.repositories} value={gh.publicRepos || gh.repositories} />
-                  </p>
-                </div>
-                <div className="rounded-lg border border-line bg-surface-2/50 px-3 py-2.5">
-                  <p className="font-mono text-[9px] tracking-[0.14em] text-faint uppercase">
-                    Stars Earned
-                  </p>
-                  <p className="mt-1 font-sans text-[17px] font-bold tracking-tight text-ink">
-                    <Counter key={gh.stars} value={gh.stars} />
-                  </p>
-                </div>
-                <div className="rounded-lg border border-line bg-surface-2/50 px-3 py-2.5">
-                  <p className="font-mono text-[9px] tracking-[0.14em] text-faint uppercase">
-                    Pull Requests
-                  </p>
-                  <p className="mt-1 font-sans text-[17px] font-bold tracking-tight text-ink">
-                    <Counter key={gh.pullRequests} value={gh.pullRequests} />
-                  </p>
-                </div>
-                <div className="rounded-lg border border-line bg-surface-2/50 px-3 py-2.5">
-                  <p className="font-mono text-[9px] tracking-[0.14em] text-faint uppercase">
-                    Current Streak
-                  </p>
-                  <p className="mt-1 font-sans text-[17px] font-bold tracking-tight text-[#bc4c00] dark:text-[#f0883e]">
-                    {streak}d
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-5 grid grid-cols-2 gap-3 border-t border-line pt-4">
-              <div>
-                <p className="font-mono text-[9.5px] tracking-[0.14em] text-muted uppercase">
-                  Followers
+              {/* LeetCode Badges — fills remaining space */}
+              <div className="mt-6 flex flex-1 flex-col border-t border-line pt-5">
+                <p className="font-mono text-[10px] tracking-[0.18em] text-muted uppercase">
+                  LeetCode Badges
                 </p>
-                <p className="mt-1 font-sans text-lg font-semibold tracking-tighter text-ink">
-                  <Counter key={gh.followers} value={gh.followers} />
-                </p>
-              </div>
-              <div>
-                <p className="font-mono text-[9.5px] tracking-[0.14em] text-muted uppercase">
-                  Snapshot
-                </p>
-                <p className="mt-1 font-mono text-[13px] font-medium text-ink/85">
-                  {generated}
-                </p>
+                <div className="mt-3 grid flex-1 grid-cols-2 content-center items-center gap-3">
+                  {LEETCODE_BADGES.map((b, idx) => (
+                    <div key={b.days} className="flex items-center justify-center">
+                      <img
+                        src={`/badges/${b.days}-days.png`}
+                        alt={`LeetCode ${b.days} Days Badge ${b.year}`}
+                        width={312}
+                        height={312}
+                        loading="lazy"
+                        decoding="async"
+                        className="size-32 drop-shadow-[0_10px_22px_rgba(0,0,0,0.45)] sm:size-40"
+                        style={{
+                          animation: "badge-flip 2.4s linear infinite",
+                          animationDelay: idx % 2 ? "-1.2s" : "0s",
+                        }}
+                      />
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
