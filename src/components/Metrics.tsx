@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { motion, useInView } from "framer-motion";
 import {
   ArrowUpRight,
   Boxes,
@@ -26,14 +25,40 @@ import {
   type Metrics,
 } from "../lib/liveMetrics";
 import { linguistColor } from "../lib/linguistColors";
-import { EASE } from "../lib/motion";
 import { GitHubIcon, LeetCodeIcon } from "./icons/BrandIcons";
 
-const RINGS = [
-  { key: "easy", label: "Easy", color: "#A3E635" },
-  { key: "medium", label: "Medium", color: "#F59E0B" },
-  { key: "hard", label: "Hard", color: "#EF4444" },
-] as const;
+const LEETCODE_CONCEPTS = [
+  { label: "Dynamic\nProgramming", cx: 105, cy: 32, r: 26 },
+  { label: "Bit\nManip.", cx: 189, cy: 28, r: 22 },
+  { label: "String", cx: 290, cy: 32, r: 26 },
+  { label: "Recursion", cx: 226, cy: 61, r: 18 },
+  { label: "Monotonic\nStack", cx: 240, cy: 21, r: 15 },
+  { label: "Heap\n(PQ)", cx: 99, cy: 88, r: 21 },
+  { label: "Stack", cx: 151, cy: 64, r: 20 },
+  { label: "Array", cx: 403, cy: 84, r: 28 },
+  { label: "Linked\nList", cx: 346, cy: 96, r: 20 },
+  { label: "Geometry", cx: 266, cy: 79, r: 17 },
+  { label: "Counting", cx: 339, cy: 50, r: 16 },
+  { label: "Sorting", cx: 97, cy: 141, r: 23 },
+  { label: "Two\nPointers", cx: 143, cy: 114, r: 21 },
+  { label: "Queue", cx: 226, cy: 104, r: 16 },
+  { label: "Union-\nFind", cx: 186, cy: 93, r: 16 },
+  { label: "Greedy", cx: 377, cy: 141, r: 24 },
+  { label: "Tree", cx: 275, cy: 146, r: 22 },
+  { label: "Number\nTheory", cx: 301, cy: 105, r: 17 },
+  { label: "Binary\nTree", cx: 49, cy: 87, r: 19 },
+  { label: "BFS", cx: 46, cy: 135, r: 19 },
+  { label: "Hash\nTable", cx: 61, cy: 185, r: 24 },
+  { label: "Matrix", cx: 113, cy: 190, r: 19 },
+  { label: "Math", cx: 166, cy: 185, r: 24 },
+  { label: "Sliding\nWindow", cx: 186, cy: 137, r: 18 },
+  { label: "Prefix\nSum", cx: 325, cy: 143, r: 18 },
+  { label: "Binary\nSearch", cx: 307, cy: 188, r: 21 },
+  { label: "DFS", cx: 356, cy: 190, r: 19 },
+  { label: "Design", cx: 258, cy: 192, r: 17 },
+  { label: "Trie", cx: 228, cy: 146, r: 16 },
+  { label: "Divide &\nConquer", cx: 215, cy: 186, r: 16 },
+];
 
 function StatCard({
   icon: Icon,
@@ -50,18 +75,18 @@ function StatCard({
     <TiltCard className="group h-full" max={8}>
       <div className="panel flex h-full flex-col justify-between rounded-2xl border border-line p-4 transition-colors duration-300 hover:border-[var(--c-line-strong)]">
         <div className="flex items-start justify-between gap-2">
-          <span className="grid size-9 place-items-center rounded-lg border border-line bg-surface-2 text-slate-300">
+          <span className="grid size-9 place-items-center rounded-lg border border-line bg-surface-2 text-ink/85">
             <Icon className="size-4" />
           </span>
-          <span className="font-mono text-[9px] tracking-[0.14em] text-slate-400 uppercase">
+          <span className="font-mono text-[9px] tracking-[0.14em] text-muted uppercase">
             {note}
           </span>
         </div>
         <div className="mt-5">
-          <div className="font-sans text-[26px] leading-none font-semibold tracking-tighter text-white">
+          <div className="font-sans text-[26px] leading-none font-semibold tracking-tighter text-ink">
             <Counter key={value} value={value} />
           </div>
-          <div className="mt-1.5 font-mono text-[9.5px] tracking-[0.16em] text-slate-400 uppercase">
+          <div className="mt-1.5 font-mono text-[9.5px] tracking-[0.16em] text-muted uppercase">
             {label}
           </div>
         </div>
@@ -70,76 +95,15 @@ function StatCard({
   );
 }
 
-function Ring({
-  label,
-  color,
-  value,
-  total,
-  delay,
-}: {
-  label: string;
-  color: string;
-  value: number;
-  total: number;
-  delay: number;
-}) {
-  const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, margin: "-50px" });
-  const r = 30;
-  const c = 2 * Math.PI * r;
-  const pct = total > 0 ? Math.min(1, value / total) : 0;
-
-  return (
-    <div ref={ref} className="flex flex-col items-center gap-2.5">
-      <div className="relative">
-        <svg width="76" height="76" viewBox="0 0 76 76" className="-rotate-90">
-          <circle
-            cx="38"
-            cy="38"
-            r={r}
-            fill="none"
-            stroke="var(--c-line-strong)"
-            strokeWidth="6"
-          />
-          <motion.circle
-            cx="38"
-            cy="38"
-            r={r}
-            fill="none"
-            stroke={color}
-            strokeWidth="6"
-            strokeLinecap="round"
-            strokeDasharray={c}
-            initial={{ strokeDashoffset: c }}
-            animate={{ strokeDashoffset: inView ? c * (1 - pct) : c }}
-            transition={{ duration: 1.4, delay, ease: EASE }}
-            style={{ filter: `drop-shadow(0 0 6px ${color}66)` }}
-          />
-        </svg>
-        <div className="absolute inset-0 grid place-items-center">
-          <span className="text-lg font-semibold tracking-tight">
-            <Counter key={value} value={value} duration={1200} />
-          </span>
-        </div>
-      </div>
-      <span className="font-mono text-[10px] tracking-[0.16em] text-muted uppercase">
-        {label}
-      </span>
-      <span className="font-mono text-[9.5px] text-faint">
-        of {total || "—"}
-      </span>
-    </div>
-  );
-}
 
 function statusStyle(status: DashboardStatus) {
   if (status === "live")
-    return { label: "LIVE", className: "border-emerald-500/30 bg-emerald-500/10 text-emerald-400" };
+    return { label: "LIVE", className: "border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400" };
   if (status === "loading")
-    return { label: "REFRESHING", className: "border-white/15 bg-white/5 text-slate-300" };
+    return { label: "REFRESHING", className: "border-line bg-surface-2 text-ink/85" };
   if (status === "unavailable")
-    return { label: "UNAVAILABLE", className: "border-red-500/30 bg-red-500/10 text-red-400" };
-  return { label: "CACHED", className: "border-amber-500/30 bg-amber-500/10 text-amber-300" };
+    return { label: "UNAVAILABLE", className: "border-red-500/30 bg-red-500/10 text-red-600 dark:text-red-400" };
+  return { label: "CACHED", className: "border-amber-500/30 bg-amber-500/10 text-amber-600 dark:text-amber-300" };
 }
 
 export default function Metrics() {
@@ -221,7 +185,7 @@ export default function Metrics() {
               <span className="status-dot scale-75" />
               {pill.label}
             </span>
-            <span className="font-mono text-[11px] text-slate-400">
+            <span className="font-mono text-[11px] text-muted">
               Updated {generated}
             </span>
           </div>
@@ -230,7 +194,7 @@ export default function Metrics() {
             onClick={onRefresh}
             disabled={refreshing}
             data-cursor="link"
-            className="inline-flex items-center gap-2 rounded-full border border-line bg-surface px-3.5 py-2 font-mono text-[11px] tracking-[0.12em] text-slate-300 uppercase transition-all duration-200 hover:border-white/30 hover:text-white disabled:cursor-wait disabled:opacity-60"
+            className="inline-flex items-center gap-2 rounded-full border border-line bg-surface px-3.5 py-2 font-mono text-[11px] tracking-[0.12em] text-ink/85 uppercase transition-all duration-200 hover:border-[var(--c-line-strong)] hover:text-ink disabled:cursor-wait disabled:opacity-60"
           >
             <RefreshCw className={`size-3.5 ${refreshing ? "animate-spin" : ""}`} />
             {refreshing ? "Refreshing" : "Refresh"}
@@ -238,18 +202,18 @@ export default function Metrics() {
         </div>
 
         <div className="grid gap-5 lg:grid-cols-12">
-          <div className="min-w-0 rounded-2xl border border-[#30363d] bg-[#0d1117] p-5 shadow-2xl md:p-6 lg:col-span-8">
-            <div className="mb-5 flex flex-wrap items-center justify-between gap-3 border-b border-[#30363d]/70 pb-4">
+          <div className="min-w-0 rounded-2xl border border-line bg-surface dark:border-[#30363d] dark:bg-[#0d1117] p-5 shadow-2xl md:p-6 lg:col-span-8">
+            <div className="mb-5 flex flex-wrap items-center justify-between gap-3 border-b border-line dark:border-[#30363d]/70 pb-4">
               <div className="flex items-center gap-3">
-                <span className="grid size-9 place-items-center rounded-lg border border-[#30363d] bg-[#161b22] text-white">
+                <span className="grid size-9 place-items-center rounded-lg border border-line bg-surface-2 text-ink">
                   <GitHubIcon className="size-4.5" />
                 </span>
                 <div>
                   <div className="flex items-center gap-2">
-                    <p className="font-sans text-[14.5px] font-semibold tracking-tight text-white">
+                    <p className="font-sans text-[14.5px] font-semibold tracking-tight text-ink">
                       GitHub Activity
                     </p>
-                    <span className="rounded-full border border-[#30363d] bg-[#21262d] px-2 py-0.5 font-mono text-[9px] text-[#7d8590]">
+                    <span className="rounded-full border border-line bg-surface-2 px-2 py-0.5 font-mono text-[9px] text-[#57606a] dark:border-[#30363d] dark:bg-[#21262d] dark:text-[#7d8590]">
                       Public
                     </span>
                   </div>
@@ -258,7 +222,7 @@ export default function Metrics() {
                     target="_blank"
                     rel="noreferrer noopener"
                     data-cursor="open"
-                    className="group flex items-center gap-1 font-mono text-[11px] text-[#58a6ff] hover:underline"
+                    className="group flex items-center gap-1 font-mono text-[11px] text-[#0969da] hover:underline dark:text-[#58a6ff]"
                   >
                     @{gh.username}
                     <ArrowUpRight className="size-3 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
@@ -267,25 +231,25 @@ export default function Metrics() {
               </div>
 
               <div className="flex flex-wrap items-center gap-2 font-mono text-[10.5px]">
-                <div className="inline-flex items-center gap-1.5 rounded-md border border-[#30363d] bg-[#161b22] px-2.5 py-1 text-slate-300">
-                  <GitCommit className="size-3 text-[#3fb950]" />
+                <div className="inline-flex items-center gap-1.5 rounded-md border border-line bg-surface-2 px-2.5 py-1 text-ink/85">
+                  <GitCommit className="size-3 text-[#1a7f37] dark:text-[#3fb950]" />
                   <span>Commits:</span>
-                  <span className="font-semibold text-white">{gh.commits}</span>
+                  <span className="font-semibold text-ink">{gh.commits}</span>
                 </div>
-                <div className="inline-flex items-center gap-1.5 rounded-md border border-[#30363d] bg-[#161b22] px-2.5 py-1 text-slate-300">
-                  <Boxes className="size-3 text-[#58a6ff]" />
+                <div className="inline-flex items-center gap-1.5 rounded-md border border-line bg-surface-2 px-2.5 py-1 text-ink/85">
+                  <Boxes className="size-3 text-[#0969da] dark:text-[#58a6ff]" />
                   <span>Repos:</span>
-                  <span className="font-semibold text-white">{gh.repositories}</span>
+                  <span className="font-semibold text-ink">{gh.repositories}</span>
                 </div>
-                <div className="inline-flex items-center gap-1.5 rounded-md border border-[#30363d] bg-[#161b22] px-2.5 py-1 text-slate-300">
-                  <Users className="size-3 text-[#bc8cff]" />
+                <div className="inline-flex items-center gap-1.5 rounded-md border border-line bg-surface-2 px-2.5 py-1 text-ink/85">
+                  <Users className="size-3 text-[#8250df] dark:text-[#bc8cff]" />
                   <span>Followers:</span>
-                  <span className="font-semibold text-white">{gh.followers}</span>
+                  <span className="font-semibold text-ink">{gh.followers}</span>
                 </div>
-                <div className="inline-flex items-center gap-1.5 rounded-md border border-[#30363d] bg-[#161b22] px-2.5 py-1 text-slate-300">
-                  <Flame className="size-3 text-[#f0883e]" />
+                <div className="inline-flex items-center gap-1.5 rounded-md border border-line bg-surface-2 px-2.5 py-1 text-ink/85">
+                  <Flame className="size-3 text-[#bc4c00] dark:text-[#f0883e]" />
                   <span>Streak:</span>
-                  <span className="font-semibold text-white">{streak}d</span>
+                  <span className="font-semibold text-ink">{streak}d</span>
                 </div>
               </div>
             </div>
@@ -320,139 +284,299 @@ export default function Metrics() {
             />
           </div>
 
-          <div className="panel min-w-0 rounded-2xl border border-line bg-surface p-5 md:p-6 lg:col-span-7">
-            <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-              <div className="flex items-center gap-3">
-                <span className="grid size-9 place-items-center rounded-lg border border-line bg-surface-2 text-[#FFA116]">
-                  <LeetCodeIcon className="size-4.5" />
+          {/* --------------------------------- LeetCode Card (Performance + Image 1 Concepts) */}
+          <div className="panel min-w-0 rounded-2xl border border-line bg-surface p-5 md:p-6 lg:col-span-7 flex flex-col justify-between h-full">
+            <div>
+              {/* Card Header */}
+              <div className="mb-5 flex flex-wrap items-center justify-between gap-3 border-b border-line pb-4">
+                <div className="flex items-center gap-3">
+                  <span className="grid size-9 place-items-center rounded-lg border border-line bg-surface-2 text-[#FFA116]">
+                    <LeetCodeIcon className="size-4.5" />
+                  </span>
+                  <div>
+                    <p className="font-sans text-[14.5px] font-semibold tracking-tight text-ink">
+                      LeetCode Performance
+                    </p>
+                    <a
+                      href={lc.profileUrl}
+                      target="_blank"
+                      rel="noreferrer noopener"
+                      data-cursor="open"
+                      className="group flex items-center gap-1 font-mono text-[11px] text-muted transition-colors hover:text-[#9a5b00] dark:hover:text-[#FFA116]"
+                    >
+                      @{lc.username}
+                      <ArrowUpRight className="size-3 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                    </a>
+                  </div>
+                </div>
+                <span className="flex items-center gap-1.5 rounded-full border border-line bg-surface-2 px-2.5 py-1 font-mono text-[9.5px] tracking-[0.14em] text-ink/85 uppercase">
+                  <span className="status-dot scale-75" />
+                  {lc.source === "live" ? "live data" : lc.source === "unavailable" ? "unavailable" : "cached"}
                 </span>
+              </div>
+
+              {/* Total Solved + Beats 84.4% */}
+              <div className="flex flex-wrap items-baseline justify-between gap-3">
                 <div>
-                  <p className="font-sans text-[14.5px] font-semibold tracking-tight text-white">
-                    LeetCode Performance
-                  </p>
-                  <a
-                    href={lc.profileUrl}
-                    target="_blank"
-                    rel="noreferrer noopener"
-                    data-cursor="open"
-                    className="group flex items-center gap-1 font-mono text-[11px] text-slate-400 transition-colors hover:text-[#FFA116]"
-                  >
-                    @{lc.username}
-                    <ArrowUpRight className="size-3 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                  </a>
+                  <span className="font-mono text-[10px] tracking-[0.16em] text-muted uppercase">
+                    Total Solved
+                  </span>
+                  <div className="mt-1 flex items-baseline gap-2">
+                    <span className="font-sans text-2xl sm:text-3xl font-bold tracking-tight text-[#0369a1] dark:text-[#38bdf8]">
+                      <Counter key={lc.totalSolved || 122} value={lc.totalSolved || 122} />
+                    </span>
+                    <span className="font-sans text-sm font-medium text-ink/85">
+                      Problems
+                    </span>
+                  </div>
+                </div>
+
+                <div className="inline-flex items-center gap-1.5 rounded-full border border-line bg-surface-2 px-3 py-1 font-mono text-[11px] text-ink/85 shadow-sm">
+                  <span>👋</span>
+                  <span>Beats <strong className="text-ink">84.4%</strong></span>
                 </div>
               </div>
-              <span className="flex items-center gap-1.5 rounded-full border border-line bg-surface-2 px-2.5 py-1 font-mono text-[9.5px] tracking-[0.14em] text-slate-300 uppercase">
-                <span className="status-dot scale-75" />
-                {lc.source === "live" ? "live data" : lc.source === "unavailable" ? "unavailable" : "cached"}
-              </span>
+
+              {/* Difficulty Badges */}
+              <div className="mt-4 grid grid-cols-3 gap-2.5">
+                <div className="flex items-center justify-between rounded-xl border border-[#2dd4bf]/25 bg-[#2dd4bf]/5 px-3 py-2">
+                  <span className="font-mono text-[11.5px] font-semibold text-[#0f766e] dark:text-[#2dd4bf]">Easy</span>
+                  <span className="font-mono text-[13px] font-bold text-ink">{lc.easy?.solved ?? 67}</span>
+                </div>
+                <div className="flex items-center justify-between rounded-xl border border-[#f59e0b]/25 bg-[#f59e0b]/5 px-3 py-2">
+                  <span className="font-mono text-[11.5px] font-semibold text-[#b45309] dark:text-[#f59e0b]">Med.</span>
+                  <span className="font-mono text-[13px] font-bold text-ink">{lc.medium?.solved ?? 48}</span>
+                </div>
+                <div className="flex items-center justify-between rounded-xl border border-[#ef4444]/25 bg-[#ef4444]/5 px-3 py-2">
+                  <span className="font-mono text-[11.5px] font-semibold text-[#b91c1c] dark:text-[#ef4444]">Hard</span>
+                  <span className="font-mono text-[13px] font-bold text-ink">{lc.hard?.solved ?? 7}</span>
+                </div>
+              </div>
+
+              {/* Submissions & Acceptance Metric Boxes */}
+              <div className="mt-3.5 grid grid-cols-2 gap-3">
+                <div className="rounded-xl border border-line bg-surface-2/60 p-3">
+                  <span className="font-mono text-[9.5px] tracking-[0.14em] text-muted uppercase">
+                    Submissions
+                  </span>
+                  <p className="mt-1 font-sans text-xl font-bold tracking-tight text-[#7e22ce] dark:text-[#c084fc]">
+                    199
+                  </p>
+                </div>
+                <div className="rounded-xl border border-line bg-surface-2/60 p-3">
+                  <span className="font-mono text-[9.5px] tracking-[0.14em] text-muted uppercase">
+                    Acceptance
+                  </span>
+                  <p className="mt-1 font-sans text-xl font-bold tracking-tight text-[#15803d] dark:text-[#22c55e]">
+                    77.9%
+                  </p>
+                </div>
+              </div>
+
+              {/* Concept Circles Cluster (LeetCode Topics) */}
+              <div className="mt-4 overflow-hidden rounded-xl border border-line/60 bg-surface-2 dark:bg-[#0c1015] p-3">
+                <div className="mb-2 flex items-center justify-between">
+                  <span className="font-mono text-[9.5px] tracking-[0.16em] text-muted uppercase">
+                    DSA Topics & Concepts
+                  </span>
+                  <span className="font-mono text-[9px] text-[#15803d] dark:text-[#22c55e]">
+                    ● Active mastery
+                  </span>
+                </div>
+                <svg
+                  viewBox="0 0 440 215"
+                  className="w-full h-auto max-h-[175px]"
+                  style={{ filter: "drop-shadow(0 2px 8px var(--bubble-shadow))" }}
+                >
+                  {LEETCODE_CONCEPTS.map((c, idx) => {
+                    const dur = 3 + (idx % 5) * 0.7;
+                    const dx = (idx % 2 === 0 ? 1 : -1) * (2 + (idx % 3));
+                    const dy = (idx % 2 === 0 ? -1 : 1) * (1.5 + (idx % 4) * 0.5);
+                    return (
+                      <g
+                        key={c.label + idx}
+                        className="transition-transform duration-300 hover:scale-110 cursor-pointer"
+                        style={{ transformOrigin: `${c.cx}px ${c.cy}px` }}
+                      >
+                        <animateTransform
+                          attributeName="transform"
+                          type="translate"
+                          values={`0,0; ${dx},${dy}; 0,0; ${-dx},${-dy}; 0,0`}
+                          dur={`${dur}s`}
+                          repeatCount="indefinite"
+                        />
+                        <title>{c.label.replace("\n", " ")}</title>
+                        <circle
+                          cx={c.cx}
+                          cy={c.cy}
+                          r={c.r}
+                          className="fill-surface dark:fill-[#161b22] stroke-line"
+                          strokeWidth="1"
+                        />
+                        <path
+                          d={`M ${c.cx - c.r * 0.65} ${c.cy + c.r * 0.65} Q ${c.cx} ${c.cy + c.r - 0.5} ${c.cx + c.r * 0.65} ${c.cy + c.r * 0.65}`}
+                          stroke="var(--c-accent)"
+                          strokeWidth={c.r > 23 ? 2.5 : 2}
+                          strokeLinecap="round"
+                          fill="none"
+                        />
+                        {c.label.includes("\n") ? (
+                          <>
+                            <text
+                              x={c.cx}
+                              y={c.cy - 1.5}
+                              textAnchor="middle"
+                              fontSize={c.r > 24 ? "7.5" : "6.5"}
+                              className="fill-[var(--c-muted)]"
+                              fontFamily="var(--font-mono)"
+                              fontWeight="500"
+                            >
+                              {c.label.split("\n")[0]}
+                            </text>
+                            <text
+                              x={c.cx}
+                              y={c.cy + 7}
+                              textAnchor="middle"
+                              fontSize={c.r > 24 ? "7" : "6"}
+                              className="fill-[var(--c-muted)]"
+                              fontFamily="var(--font-mono)"
+                              fontWeight="500"
+                            >
+                              {c.label.split("\n")[1]}
+                            </text>
+                          </>
+                        ) : (
+                          <text
+                            x={c.cx}
+                            y={c.cy + 2.5}
+                            textAnchor="middle"
+                            fontSize={c.r > 24 ? "7.5" : c.r > 19 ? "7" : "6"}
+                            className="fill-[var(--c-muted)]"
+                            fontFamily="var(--font-mono)"
+                            fontWeight="500"
+                          >
+                            {c.label}
+                          </text>
+                        )}
+                      </g>
+                    );
+                  })}
+                </svg>
+              </div>
             </div>
 
-            <div className="flex flex-wrap items-center justify-between gap-6">
-              <div className="flex gap-4 sm:gap-7">
-                {RINGS.map((r, i) => (
-                  <Ring
-                    key={r.key}
-                    label={r.label}
-                    color={r.color}
-                    value={lc[r.key].solved}
-                    total={lc[r.key].total}
-                    delay={i * 0.15}
-                  />
-                ))}
+            {/* Bottom baseline row */}
+            <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-line pt-4">
+              <div className="font-mono text-[11px] text-muted">
+                Global Ranking{" "}
+                <span className="font-semibold text-ink">
+                  {lc.ranking ? `#${lc.ranking.toLocaleString("en-US")}` : "#1,445,006"}
+                </span>
               </div>
-
-              <div className="min-w-[160px] flex-1 space-y-2.5">
-                <div className="flex items-baseline justify-between border-b border-line pb-2.5">
-                  <span className="font-mono text-[10px] tracking-[0.14em] text-slate-400 uppercase">
-                    Total solved
-                  </span>
-                  <span className="font-sans text-xl font-semibold tracking-tighter text-white">
-                    <Counter key={lc.totalSolved} value={lc.totalSolved} />
-                  </span>
-                </div>
-                <div className="flex items-baseline justify-between border-b border-line pb-2.5">
-                  <span className="font-mono text-[10px] tracking-[0.14em] text-slate-400 uppercase">
-                    Ranking
-                  </span>
-                  <span className="font-mono text-[13px] font-medium text-slate-200">
-                    {lc.ranking ? `#${lc.ranking.toLocaleString("en-US")}` : "—"}
-                  </span>
-                </div>
-                <div className="flex items-baseline justify-between">
-                  <span className="font-mono text-[10px] tracking-[0.14em] text-slate-400 uppercase">
-                    Contest rating
-                  </span>
-                  <span className="font-mono text-[13px] font-medium text-slate-200">
-                    {lc.contestRating ? Math.round(lc.contestRating) : "—"}
-                  </span>
-                </div>
-                <a
-                  href={lc.profileUrl}
-                  target="_blank"
-                  rel="noreferrer noopener"
-                  data-cursor="open"
-                  className="mt-1 inline-flex w-full items-center justify-center gap-2 rounded-full border border-white/10 bg-surface-2 px-4 py-2.5 text-[12.5px] font-medium text-slate-200 transition-all duration-300 hover:border-[#FFA116] hover:text-[#FFA116]"
-                >
-                  Solve alongside me
-                  <ArrowUpRight className="size-3.5" />
-                </a>
-              </div>
+              <a
+                href={lc.profileUrl}
+                target="_blank"
+                rel="noreferrer noopener"
+                data-cursor="open"
+                className="inline-flex items-center gap-1.5 rounded-full border border-line bg-surface-2 px-3.5 py-1.5 font-mono text-[11px] font-medium text-ink transition-all duration-300 hover:border-[#FFA116] hover:text-[#9a5b00] dark:hover:text-[#FFA116]"
+              >
+                Solve alongside me
+                <ArrowUpRight className="size-3" />
+              </a>
             </div>
           </div>
 
-          <div className="panel min-w-0 rounded-2xl border border-line bg-surface p-5 md:p-6 lg:col-span-5">
-            <p className="mb-1.5 font-mono text-[10px] tracking-[0.18em] text-slate-400 uppercase">
-              Repository Languages
-            </p>
-            <p className="mb-5 font-mono text-[10px] text-slate-500">
-              Top languages by source bytes across active public, non-fork repos
-            </p>
+          {/* --------------------------------- Repository Languages Card */}
+          <div className="panel min-w-0 rounded-2xl border border-line bg-surface p-5 md:p-6 lg:col-span-5 flex flex-col justify-between h-full">
+            <div>
+              <p className="mb-1.5 font-mono text-[10px] tracking-[0.18em] text-muted uppercase">
+                Repository Languages
+              </p>
+              <p className="mb-5 font-mono text-[10px] text-faint">
+                Top languages by source bytes across active public, non-fork repos
+              </p>
 
-            <div className="space-y-4">
-              {displayedLangs.map((l) => {
-                const pct = formatLanguagePercent(l.bytes, langTotal);
-                const width = langTotal ? Math.max(2, (l.bytes / langTotal) * 100) : 0;
-                const color = l.color || linguistColor(l.name);
-                return (
-                  <div key={l.name}>
-                    <div className="mb-1.5 flex justify-between font-mono text-[11px]">
-                      <span className="font-medium text-slate-200">{l.name}</span>
-                      <span className="text-slate-400">{pct}%</span>
+              <div className="space-y-4">
+                {displayedLangs.map((l) => {
+                  const pct = formatLanguagePercent(l.bytes, langTotal);
+                  const width = langTotal ? Math.max(2, (l.bytes / langTotal) * 100) : 0;
+                  const color = l.color || linguistColor(l.name);
+                  return (
+                    <div key={l.name}>
+                      <div className="mb-1.5 flex justify-between font-mono text-[11px]">
+                        <span className="font-medium text-ink">{l.name}</span>
+                        <span className="text-muted">{pct}%</span>
+                      </div>
+                      <div className="h-2 w-full overflow-hidden rounded-full bg-line">
+                        <div
+                          className="h-full rounded-full transition-all duration-700"
+                          style={{
+                            width: `${width}%`,
+                            backgroundColor: color,
+                          }}
+                        />
+                      </div>
                     </div>
-                    <div className="h-2 w-full overflow-hidden rounded-full bg-white/[0.06]">
-                      <div
-                        className="h-full rounded-full transition-all duration-700"
-                        style={{
-                          width: `${width}%`,
-                          backgroundColor: color,
-                        }}
-                      />
-                    </div>
-                  </div>
-                );
-              })}
-              {displayedLangs.length === 0 && (
-                <p className="font-mono text-[12px] text-slate-400">
-                  Language data unavailable.
-                </p>
-              )}
+                  );
+                })}
+                {displayedLangs.length === 0 && (
+                  <p className="font-mono text-[12px] text-muted">
+                    Language data unavailable.
+                  </p>
+                )}
+              </div>
+
+              {/* GitHub Quick Stats — fills remaining space */}
+              <div className="mt-6 grid grid-cols-2 gap-2.5 border-t border-line pt-5">
+                <div className="rounded-lg border border-line bg-surface-2/50 px-3 py-2.5">
+                  <p className="font-mono text-[9px] tracking-[0.14em] text-faint uppercase">
+                    Public Repos
+                  </p>
+                  <p className="mt-1 font-sans text-[17px] font-bold tracking-tight text-ink">
+                    <Counter key={gh.publicRepos || gh.repositories} value={gh.publicRepos || gh.repositories} />
+                  </p>
+                </div>
+                <div className="rounded-lg border border-line bg-surface-2/50 px-3 py-2.5">
+                  <p className="font-mono text-[9px] tracking-[0.14em] text-faint uppercase">
+                    Stars Earned
+                  </p>
+                  <p className="mt-1 font-sans text-[17px] font-bold tracking-tight text-ink">
+                    <Counter key={gh.stars} value={gh.stars} />
+                  </p>
+                </div>
+                <div className="rounded-lg border border-line bg-surface-2/50 px-3 py-2.5">
+                  <p className="font-mono text-[9px] tracking-[0.14em] text-faint uppercase">
+                    Pull Requests
+                  </p>
+                  <p className="mt-1 font-sans text-[17px] font-bold tracking-tight text-ink">
+                    <Counter key={gh.pullRequests} value={gh.pullRequests} />
+                  </p>
+                </div>
+                <div className="rounded-lg border border-line bg-surface-2/50 px-3 py-2.5">
+                  <p className="font-mono text-[9px] tracking-[0.14em] text-faint uppercase">
+                    Current Streak
+                  </p>
+                  <p className="mt-1 font-sans text-[17px] font-bold tracking-tight text-[#bc4c00] dark:text-[#f0883e]">
+                    {streak}d
+                  </p>
+                </div>
+              </div>
             </div>
 
-            <div className="mt-6 grid grid-cols-2 gap-3 border-t border-line pt-5">
+            <div className="mt-5 grid grid-cols-2 gap-3 border-t border-line pt-4">
               <div>
-                <p className="font-mono text-[9.5px] tracking-[0.14em] text-slate-400 uppercase">
+                <p className="font-mono text-[9.5px] tracking-[0.14em] text-muted uppercase">
                   Followers
                 </p>
-                <p className="mt-1 font-sans text-lg font-semibold tracking-tighter text-white">
+                <p className="mt-1 font-sans text-lg font-semibold tracking-tighter text-ink">
                   <Counter key={gh.followers} value={gh.followers} />
                 </p>
               </div>
               <div>
-                <p className="font-mono text-[9.5px] tracking-[0.14em] text-slate-400 uppercase">
+                <p className="font-mono text-[9.5px] tracking-[0.14em] text-muted uppercase">
                   Snapshot
                 </p>
-                <p className="mt-1 font-mono text-[13px] font-medium text-slate-300">
+                <p className="mt-1 font-mono text-[13px] font-medium text-ink/85">
                   {generated}
                 </p>
               </div>

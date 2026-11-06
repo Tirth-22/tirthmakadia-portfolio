@@ -5,8 +5,8 @@ import { AWS_GLYPHS } from "../data/awsGlyphs";
  * Ambient AWS service icon field.
  * Small, low-contrast AWS glyphs drift downward like a subtle digital
  * galaxy — rendered on a single canvas (few DOM nodes) behind content.
- * Pauses when the architecture section leaves the viewport or the tab
- * is hidden, and honours prefers-reduced-motion.
+ * Runs continuously for the whole session; only pauses when the tab is
+ * hidden and honours prefers-reduced-motion.
  */
 
 type Icon = {
@@ -85,7 +85,7 @@ export default function AwsIconField() {
         size,
         rot: Math.random() * Math.PI * 2,
         rotSpeed: (Math.random() - 0.5) * 0.25,
-        speed: hero ? 4 + Math.random() * 6 : 6 + Math.random() * 10, // px/s
+        speed: hero ? 7 + Math.random() * 8 : 10 + Math.random() * 14, // px/s
         sway: 6 + Math.random() * 18, // lateral drift amplitude
         phase: Math.random() * Math.PI * 2,
         alpha: hero ? 0.11 + Math.random() * 0.06 : 0.05 + Math.random() * 0.06,
@@ -96,19 +96,7 @@ export default function AwsIconField() {
     const icons: Icon[] = Array.from({ length: count }, () => spawn(true));
 
     /* ---- pause conditions ---------------------------------------- */
-    let visible = true;
     let docVisible = !document.hidden;
-    const section = document.getElementById("architecture");
-    let io: IntersectionObserver | null = null;
-    if (section && "IntersectionObserver" in window) {
-      io = new IntersectionObserver(
-        (entries) => {
-          visible = entries.some((e) => e.isIntersecting);
-        },
-        { threshold: 0.02 },
-      );
-      io.observe(section);
-    }
     const onVis = () => {
       docVisible = !document.hidden;
     };
@@ -124,7 +112,7 @@ export default function AwsIconField() {
       const dt = Math.min((now - last) / 1000, 0.05);
       last = now;
 
-      if (!visible || !docVisible) return;
+      if (!docVisible) return;
       elapsed += dt;
 
       ctx.clearRect(0, 0, w, h);
@@ -173,7 +161,6 @@ export default function AwsIconField() {
       cancelAnimationFrame(raf);
       window.removeEventListener("resize", onResize);
       document.removeEventListener("visibilitychange", onVis);
-      io?.disconnect();
     };
   }, []);
 

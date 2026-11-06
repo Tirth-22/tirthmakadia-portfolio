@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useInView } from "framer-motion";
 import type { ContributionDay } from "../lib/metrics";
 
@@ -28,13 +28,13 @@ const WEEKDAYS = [
   { row: 5, label: "Fri" },
 ];
 
-/* GitHub dark-mode contribution square colors */
+/* GitHub contribution square colors — themed (light / dark palettes in CSS) */
 const GH_LEVEL_COLORS = [
-  "#161b22", // Level 0: empty
-  "#0e4429", // Level 1
-  "#006d32", // Level 2
-  "#26a641", // Level 3
-  "#39d353", // Level 4
+  "var(--gh-0)", // Level 0: empty
+  "var(--gh-1)", // Level 1
+  "var(--gh-2)", // Level 2
+  "var(--gh-3)", // Level 3
+  "var(--gh-4)", // Level 4
 ];
 
 type Cell = { date: string; level: number; count: number; week: number; row: number };
@@ -94,10 +94,35 @@ export default function ContributionCalendar({ days, total }: Props) {
     y: number;
   } | null>(null);
 
+  /* edge fades — hint that the calendar can be swiped on narrow screens */
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [edge, setEdge] = useState({ left: false, right: false });
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const update = () => {
+      setEdge({
+        left: el.scrollLeft > 4,
+        right: el.scrollLeft + el.clientWidth < el.scrollWidth - 4,
+      });
+    };
+    update();
+    el.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    return () => {
+      el.removeEventListener("scroll", update);
+      window.removeEventListener("resize", update);
+      ro.disconnect();
+    };
+  }, [days]);
+
   const grid = useMemo(() => build(days), [days]);
   if (!grid) {
     return (
-      <p className="font-mono text-[12px] text-[#7d8590]">
+      <p className="font-mono text-[12px] text-muted">
         Contribution history unavailable.
       </p>
     );
@@ -122,7 +147,8 @@ export default function ContributionCalendar({ days, total }: Props) {
 
   return (
     <div ref={wrapRef} className="relative">
-      <div className="overflow-x-auto pb-1">
+      <div className="relative">
+        <div ref={scrollRef} className="overflow-x-auto pb-1">
         <svg
           ref={svgRef}
           viewBox={`0 0 ${width} ${HEIGHT}`}
@@ -138,7 +164,7 @@ export default function ContributionCalendar({ days, total }: Props) {
               y={12}
               fontSize="9"
               style={{
-                fill: "#7d8590",
+                fill: "var(--c-muted)",
                 fontFamily: "var(--font-mono)",
               }}
             >
@@ -153,7 +179,7 @@ export default function ContributionCalendar({ days, total }: Props) {
               y={TOP + w.row * PITCH + CELL - 1.5}
               fontSize="8.5"
               style={{
-                fill: "#7d8590",
+                fill: "var(--c-muted)",
                 fontFamily: "var(--font-mono)",
               }}
             >
@@ -174,7 +200,7 @@ export default function ContributionCalendar({ days, total }: Props) {
                 rx={2}
                 style={{
                   fill,
-                  stroke: c.level === 0 ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.06)",
+                  stroke: "var(--c-line)",
                   strokeWidth: 0.5,
                   animationDelay: `${c.week * 0.012 + c.row * 0.005}s`,
                 }}
@@ -184,14 +210,29 @@ export default function ContributionCalendar({ days, total }: Props) {
             );
           })}
         </svg>
+        </div>
+
+        {/* swipe affordance — only while there is more calendar off-screen */}
+        {edge.left && (
+          <span
+            aria-hidden
+            className="pointer-events-none absolute inset-y-0 left-0 w-8 bg-gradient-to-r from-surface to-transparent dark:from-[#0d1117]"
+          />
+        )}
+        {edge.right && (
+          <span
+            aria-hidden
+            className="pointer-events-none absolute inset-y-0 right-0 w-12 bg-gradient-to-l from-surface to-transparent dark:from-[#0d1117]"
+          />
+        )}
       </div>
 
       {/* GitHub standard legend */}
-      <div className="mt-3 flex items-center justify-between gap-4 border-t border-[#30363d]/60 pt-3">
-        <span className="font-mono text-[10px] tracking-[0.14em] text-[#7d8590]">
+      <div className="mt-3 flex items-center justify-between gap-4 border-t border-line pt-3">
+        <span className="font-mono text-[10px] tracking-[0.14em] text-muted">
           {total.toLocaleString("en-US")} contributions in the last year
         </span>
-        <div className="flex items-center gap-1.5 font-mono text-[10px] text-[#7d8590]">
+        <div className="flex items-center gap-1.5 font-mono text-[10px] text-muted">
           <span>Less</span>
           {GH_LEVEL_COLORS.map((color, i) => (
             <span
@@ -199,7 +240,7 @@ export default function ContributionCalendar({ days, total }: Props) {
               className="size-[10px] rounded-[2px]"
               style={{
                 backgroundColor: color,
-                border: "1px solid rgba(255,255,255,0.05)",
+                border: "1px solid var(--c-line)",
               }}
             />
           ))}
@@ -210,16 +251,16 @@ export default function ContributionCalendar({ days, total }: Props) {
       {/* tooltip */}
       {hover && (
         <div
-          className="pointer-events-none absolute z-20 -translate-x-1/2 -translate-y-[calc(100%+10px)] rounded-md border border-[#30363d] bg-[#161b22] px-3 py-1.5 shadow-xl text-center"
+          className="pointer-events-none absolute z-20 -translate-x-1/2 -translate-y-[calc(100%+10px)] rounded-md border border-line bg-surface px-3 py-1.5 shadow-xl text-center"
           style={{
             left: Math.min(Math.max(hover.x, 70), (wrapRef.current?.clientWidth ?? 300) - 70),
             top: hover.y,
           }}
         >
-          <p className="font-mono text-[11px] font-medium text-white whitespace-nowrap">
+          <p className="font-mono text-[11px] font-medium text-ink whitespace-nowrap">
             {hover.day.count} contribution{hover.day.count === 1 ? "" : "s"}
           </p>
-          <p className="mt-0.5 font-mono text-[9.5px] whitespace-nowrap text-[#7d8590]">
+          <p className="mt-0.5 font-mono text-[9.5px] whitespace-nowrap text-muted">
             {fmt(hover.day.date)}
           </p>
         </div>

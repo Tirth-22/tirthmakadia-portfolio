@@ -83,18 +83,18 @@ export default function Stack() {
               design notes
             </span>
             {[
-              "Distributed microservices",
-              "API gateway",
+              "High-Level Design",
+              "REST API & Low-Level Design",
               "Service discovery",
-              "Event-driven architecture",
-              "Kafka messaging",
-              "CI/CD automation",
-              "Docker containerization",
-              "Infrastructure as code",
-              "AWS IAM",
+              "Concurrency & JVM Basics",
+              "Caching Strategies",
+              "Database Design & Scaling",
+              "Containerization",
+              "CI/CD pipeline & Orchestration",
+              "Proxies  & Traffic Management",
               "Fault tolerance",
-              "Observability",
-              "Idempotency",
+              "Idempotency & Transaction Safety",
+              "Observability & Monitoring ",
             ].map((c) => (
               <span key={c} className="chip">
                 {c}

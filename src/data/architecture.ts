@@ -1,8 +1,6 @@
 /**
- * System Topology Data Model — Fan-Out Microservices Architecture
+ * System Topology Data Model — Continuous Fan-Out Microservices Architecture
  */
-
-export type FlowKind = "request" | "deploy";
 
 export type TopoNode = {
   id: string;
@@ -16,49 +14,50 @@ export type TopoNode = {
   accent: string;
 };
 
-export type TopoEdge = {
+export type ContinuousEdge = {
   id: string;
-  flow: "request" | "deploy";
   d: string;
   color: string;
+  dur: string;
+  delay: string;
 };
 
-export const CANVAS = { w: 1080, h: 300 };
+export const CANVAS = { w: 1020, h: 320 };
 
 /* ---------------- Main Architecture Nodes ---------------- */
 export const ARCH_NODES: TopoNode[] = [
-  // Client
+  // 1. Client
   {
     id: "client",
     kind: "client",
-    x: 40,
+    x: 35,
     y: 65,
-    w: 125,
-    h: 62,
+    w: 110,
+    h: 60,
     title: "Client",
     sub: "React · browser",
     accent: "#E2E8F0",
   },
-  // Gateway
+  // 2. Gateway
   {
     id: "gateway",
     kind: "gateway",
-    x: 215,
+    x: 195,
     y: 58,
-    w: 135,
-    h: 76,
+    w: 120,
+    h: 74,
     title: "Gateway",
     sub: "jwt · route",
     accent: "#38BDF8",
   },
-  // Stacked Microservices (Image 2 style)
+  // 3. Stacked Microservices
   {
     id: "auth-svc",
     kind: "service",
-    x: 430,
-    y: 35,
-    w: 145,
-    h: 34,
+    x: 395,
+    y: 32,
+    w: 130,
+    h: 32,
     title: "auth-svc",
     sub: "JWT & Access",
     accent: "#10B981",
@@ -66,10 +65,10 @@ export const ARCH_NODES: TopoNode[] = [
   {
     id: "user-svc",
     kind: "service",
-    x: 430,
+    x: 395,
     y: 79,
-    w: 145,
-    h: 34,
+    w: 130,
+    h: 32,
     title: "user-svc",
     sub: "Profile & State",
     accent: "#10B981",
@@ -77,46 +76,46 @@ export const ARCH_NODES: TopoNode[] = [
   {
     id: "request-svc",
     kind: "service",
-    x: 430,
-    y: 123,
-    w: 145,
-    h: 34,
+    x: 395,
+    y: 126,
+    w: 130,
+    h: 32,
     title: "request-svc",
     sub: "Domain Logic",
     accent: "#10B981",
   },
-  // Kafka broker — its own small layer between the services and storage
+  // 4. Separate Small Kafka Layer
   {
     id: "kafka",
     kind: "kafka",
-    x: 610,
-    y: 74,
-    w: 100,
-    h: 44,
+    x: 580,
+    y: 68,
+    w: 95,
+    h: 54,
     title: "Kafka",
     sub: "event stream",
-    accent: "#10B981",
+    accent: "#06B6D4",
   },
-  // Data Layer (PostgreSQL)
+  // 5. Database (PostgreSQL)
   {
     id: "data",
     kind: "data",
-    x: 750,
-    y: 61,
-    w: 135,
-    h: 70,
-    title: "Data Layer",
-    sub: "postgresql",
-    accent: "#38BDF8",
+    x: 720,
+    y: 62,
+    w: 110,
+    h: 66,
+    title: "PostgreSQL",
+    sub: "relational db",
+    accent: "#3B82F6",
   },
-  // AWS Cloud
+  // 6. AWS Cloud
   {
     id: "aws",
     kind: "aws",
-    x: 925,
-    y: 54,
-    w: 140,
-    h: 84,
+    x: 875,
+    y: 50,
+    w: 120,
+    h: 90,
     title: "AWS Cloud",
     sub: "EC2 · Docker · Nginx",
     accent: "#F59E0B",
@@ -128,9 +127,9 @@ export const CICD_NODES: TopoNode[] = [
   {
     id: "github",
     kind: "cicd",
-    x: 185,
-    y: 215,
-    w: 125,
+    x: 195,
+    y: 220,
+    w: 120,
     h: 50,
     title: "GitHub",
     sub: "repository",
@@ -140,7 +139,7 @@ export const CICD_NODES: TopoNode[] = [
     id: "actions",
     kind: "cicd",
     x: 375,
-    y: 215,
+    y: 220,
     w: 145,
     h: 50,
     title: "GitHub Actions",
@@ -151,8 +150,8 @@ export const CICD_NODES: TopoNode[] = [
     id: "docker",
     kind: "cicd",
     x: 580,
-    y: 215,
-    w: 125,
+    y: 220,
+    w: 120,
     h: 50,
     title: "Docker",
     sub: "container image",
@@ -161,9 +160,9 @@ export const CICD_NODES: TopoNode[] = [
   {
     id: "deploy-aws",
     kind: "cicd",
-    x: 765,
-    y: 215,
-    w: 130,
+    x: 760,
+    y: 220,
+    w: 125,
     h: 50,
     title: "AWS Deploy",
     sub: "EC2 rollout",
@@ -171,129 +170,108 @@ export const CICD_NODES: TopoNode[] = [
   },
 ];
 
-/* ---------------- Connecting Edges ---------------- */
-export const EDGES: TopoEdge[] = [
+/* ---------------- Continuous Moving Edges ---------------- */
+export const CONTINUOUS_EDGES: ContinuousEdge[] = [
   // Client -> Gateway
   {
     id: "e-client-gw",
-    flow: "request",
-    d: "M 165 96 L 215 96",
+    d: "M 145 95 L 195 95",
     color: "#38BDF8",
+    dur: "2.0s",
+    delay: "0s",
   },
-  // Gateway Fan-Out to the 3 Microservices
+  // Gateway Fan-Out to 3 Services
   {
     id: "e-gw-auth",
-    flow: "request",
-    d: "M 350 96 C 390 96, 395 52, 430 52",
+    d: "M 315 95 C 355 95, 365 48, 395 48",
     color: "#10B981",
+    dur: "2.4s",
+    delay: "0.2s",
   },
   {
     id: "e-gw-user",
-    flow: "request",
-    d: "M 350 96 L 430 96",
+    d: "M 315 95 L 395 95",
     color: "#10B981",
+    dur: "2.2s",
+    delay: "0.3s",
   },
   {
     id: "e-gw-req",
-    flow: "request",
-    d: "M 350 96 C 390 96, 395 140, 430 140",
+    d: "M 315 95 C 355 95, 365 142, 395 142",
     color: "#10B981",
+    dur: "2.4s",
+    delay: "0.4s",
   },
 
-  // 3 Microservices converging into the Kafka layer
+  // 3 Services -> Kafka (Separate layer)
   {
-    id: "e-auth-data",
-    flow: "request",
-    d: "M 575 52 C 595 52, 595 96, 610 96",
-    color: "#38BDF8",
+    id: "e-auth-kafka",
+    d: "M 525 48 C 555 48, 560 95, 580 95",
+    color: "#06B6D4",
+    dur: "2.2s",
+    delay: "0.5s",
   },
   {
-    id: "e-user-data",
-    flow: "request",
-    d: "M 575 96 L 610 96",
-    color: "#38BDF8",
+    id: "e-user-kafka",
+    d: "M 525 95 L 580 95",
+    color: "#06B6D4",
+    dur: "2.0s",
+    delay: "0.6s",
   },
   {
-    id: "e-req-data",
-    flow: "request",
-    d: "M 575 140 C 595 140, 595 96, 610 96",
-    color: "#38BDF8",
+    id: "e-req-kafka",
+    d: "M 525 142 C 555 142, 560 95, 580 95",
+    color: "#06B6D4",
+    dur: "2.2s",
+    delay: "0.7s",
   },
 
-  // Kafka -> Data Layer
+  // Kafka -> PostgreSQL
   {
     id: "e-kafka-data",
-    flow: "request",
-    d: "M 710 96 L 750 96",
-    color: "#10B981",
+    d: "M 675 95 L 720 95",
+    color: "#3B82F6",
+    dur: "2.0s",
+    delay: "0.8s",
   },
 
-  // Data Layer -> AWS Cloud
+  // PostgreSQL -> AWS Cloud
   {
     id: "e-data-aws",
-    flow: "request",
-    d: "M 885 96 L 925 96",
+    d: "M 830 95 L 875 95",
     color: "#F59E0B",
+    dur: "2.0s",
+    delay: "1.0s",
   },
 
-  // CI/CD Strip Edges
+  // CI/CD Strip Continuous Lines
   {
     id: "e-gh-act",
-    flow: "deploy",
-    d: "M 310 240 L 375 240",
+    d: "M 315 245 L 375 245",
     color: "#06B6D4",
+    dur: "2.6s",
+    delay: "0.2s",
   },
   {
     id: "e-act-dock",
-    flow: "deploy",
-    d: "M 520 240 L 580 240",
+    d: "M 520 245 L 580 245",
     color: "#06B6D4",
+    dur: "2.6s",
+    delay: "0.6s",
   },
   {
     id: "e-dock-deploy",
-    flow: "deploy",
-    d: "M 705 240 L 765 240",
+    d: "M 700 245 L 760 245",
     color: "#06B6D4",
+    dur: "2.6s",
+    delay: "1.0s",
   },
-  // Upward Connector: AWS Deploy step up to AWS Cloud node
+  // Upward Connector from AWS Deploy into AWS Cloud
   {
     id: "e-deploy-up-aws",
-    flow: "deploy",
-    d: "M 855 215 L 990 140",
+    d: "M 885 220 L 885 140",
     color: "#F59E0B",
+    dur: "2.2s",
+    delay: "1.4s",
   },
 ];
-
-/* ---------------- Simulation Sequences ---------------- */
-export const TRACE_STEPS: Record<
-  FlowKind,
-  {
-    nodeIds: string[];
-    edgeIds?: string[];
-  }[]
-> = {
-  request: [
-    { nodeIds: ["client"] },
-    { nodeIds: ["gateway"], edgeIds: ["e-client-gw"] },
-    {
-      nodeIds: ["auth-svc", "user-svc", "request-svc"],
-      edgeIds: ["e-gw-auth", "e-gw-user", "e-gw-req"],
-    },
-    {
-      nodeIds: ["kafka"],
-      edgeIds: ["e-auth-data", "e-user-data", "e-req-data"],
-    },
-    {
-      nodeIds: ["data"],
-      edgeIds: ["e-kafka-data"],
-    },
-    { nodeIds: ["aws"], edgeIds: ["e-data-aws"] },
-  ],
-  deploy: [
-    { nodeIds: ["github"] },
-    { nodeIds: ["actions"], edgeIds: ["e-gh-act"] },
-    { nodeIds: ["docker"], edgeIds: ["e-act-dock"] },
-    { nodeIds: ["deploy-aws"], edgeIds: ["e-dock-deploy"] },
-    { nodeIds: ["aws"], edgeIds: ["e-deploy-up-aws"] },
-  ],
-};

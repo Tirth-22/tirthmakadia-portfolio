@@ -34,10 +34,10 @@ function ThemeToggle({
       onClick={onToggle}
       aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} theme`}
       data-cursor="link"
-      className="relative flex h-8 w-[3.4rem] shrink-0 items-center rounded-full border border-line bg-surface-2 p-1 transition-colors duration-300 hover:border-[var(--c-line-strong)]"
+      className="relative flex h-10 w-[3.9rem] shrink-0 items-center rounded-full border border-line bg-surface-2 p-1 transition-colors duration-300 hover:border-[var(--c-line-strong)] lg:h-8 lg:w-[3.4rem]"
     >
       <motion.span
-        className="grid size-6 place-items-center rounded-full bg-canvas shadow-[0_2px_10px_-4px_rgba(0,0,0,0.6)]"
+        className="grid size-8 place-items-center rounded-full bg-canvas shadow-[0_2px_10px_-4px_rgba(0,0,0,0.6)] lg:size-6"
         animate={{ x: theme === "dark" ? 0 : 22 }}
         transition={{ type: "spring", stiffness: 480, damping: 32, mass: 0.6 }}
       >
@@ -193,7 +193,7 @@ export default function Header() {
               onClick={() => setMenuOpen((v) => !v)}
               aria-label={menuOpen ? "Close menu" : "Open menu"}
               data-cursor="link"
-              className="grid size-8 place-items-center rounded-full border border-line bg-surface-2 lg:hidden"
+              className="grid size-10 place-items-center rounded-full border border-line bg-surface-2 transition-colors hover:border-[var(--c-accent)] lg:hidden"
             >
               <AnimatePresence mode="wait" initial={false}>
                 <motion.span

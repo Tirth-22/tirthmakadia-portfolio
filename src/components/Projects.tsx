@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, type CSSProperties } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ArrowLeft, ArrowRight, ArrowUpRight, CheckCircle2 } from "lucide-react";
 import SectionHeading from "./SectionHeading";
@@ -39,19 +39,19 @@ function FeaturedProjectSlide({
           <div
             className="relative flex h-full min-h-[280px] w-full flex-col rounded-2xl border p-4 sm:min-h-[340px] sm:p-5 lg:min-h-[480px]"
             style={{
-              background: "#08090C",
+              background: "var(--c-stage)",
               borderColor: `${t.accentColor}33`,
             }}
           >
             {/* Visual Top Bar — Clean, no LIVE badge */}
-            <div className="mb-3 flex items-center justify-between gap-3 border-b border-white/[0.07] pb-3">
+            <div className="mb-3 flex items-center justify-between gap-3 border-b border-line pb-3">
               <span
-                className="font-mono text-[11px] font-semibold tracking-[0.18em] uppercase"
-                style={{ color: t.badgeText }}
+                className="accent-text font-mono text-[11px] font-semibold tracking-[0.18em] uppercase"
+                style={{ "--accent-text": t.badgeText } as CSSProperties}
               >
                 {project.index} // system visual
               </span>
-              <span className="font-mono text-[11px] tracking-[0.14em] text-slate-500 uppercase">
+              <span className="font-mono text-[11px] tracking-[0.14em] text-faint uppercase">
                 {project.index} / {String(total).padStart(2, "0")}
               </span>
             </div>
@@ -60,7 +60,7 @@ function FeaturedProjectSlide({
               <ProjectVisual variant={project.visual} accent={project.accent} />
             </div>
 
-            <p className="mt-3 border-t border-white/[0.07] pt-3 font-mono text-[11px] leading-relaxed tracking-[0.08em] text-slate-400">
+            <p className="mt-3 border-t border-line pt-3 font-mono text-[11px] leading-relaxed tracking-[0.08em] text-muted">
               {project.visualCaption}
             </p>
           </div>
@@ -76,48 +76,48 @@ function FeaturedProjectSlide({
                 aria-hidden
               />
               <span
-                className="font-mono text-[11px] font-semibold tracking-[0.16em] uppercase"
-                style={{ color: t.badgeText }}
+                className="accent-text font-mono text-[11px] font-semibold tracking-[0.16em] uppercase"
+                style={{ "--accent-text": t.badgeText } as CSSProperties}
               >
                 {project.index} · {project.category}
               </span>
             </div>
 
-            <h3 className="mt-3 text-[1.65rem] font-semibold tracking-tight text-white sm:text-3xl lg:text-[2.05rem] lg:leading-[1.2]">
+            <h3 className="mt-3 text-[1.65rem] font-semibold tracking-tight text-ink sm:text-3xl lg:text-[2.05rem] lg:leading-[1.2]">
               {project.title}
             </h3>
 
-            <p className="mt-4 text-[15px] leading-relaxed text-slate-300 sm:text-[16px]">
+            <p className="mt-4 text-[15px] leading-relaxed text-muted dark:text-slate-300 sm:text-[16px]">
               {project.summary}
             </p>
 
             <div
               className="mt-6 rounded-xl border p-4 sm:p-5"
               style={{
-                background: "#0d1117",
+                background: "var(--c-stage)",
                 borderColor: `${t.cardBorder}88`,
               }}
             >
-              <p className="font-mono text-[10px] font-semibold tracking-[0.2em] text-slate-500 uppercase">
+              <p className="font-mono text-[10px] font-semibold tracking-[0.2em] text-faint uppercase">
                 Architecture pipeline
               </p>
               <p
-                className="mt-2 font-mono text-[12.5px] leading-relaxed break-words sm:text-[13px]"
-                style={{ color: t.badgeText }}
+                className="accent-text mt-2 font-mono text-[12.5px] leading-relaxed break-words sm:text-[13px]"
+                style={{ "--accent-text": t.badgeText } as CSSProperties}
               >
                 {project.architecture}
               </p>
             </div>
 
             <div className="mt-6">
-              <p className="font-mono text-[10px] font-semibold tracking-[0.2em] text-slate-500 uppercase">
+              <p className="font-mono text-[10px] font-semibold tracking-[0.2em] text-faint uppercase">
                 Key engineering highlights
               </p>
               <ul className="mt-3 grid grid-cols-1 gap-2.5 sm:grid-cols-2">
                 {project.highlights.map((h) => (
                   <li
                     key={h}
-                    className="flex items-start gap-2.5 text-[13.5px] leading-snug text-slate-300"
+                    className="flex items-start gap-2.5 text-[13.5px] leading-snug text-muted dark:text-slate-300"
                   >
                     <CheckCircle2
                       className="mt-0.5 size-4 shrink-0"
@@ -136,12 +136,13 @@ function FeaturedProjectSlide({
               {project.stack.map((tag) => (
                 <span
                   key={tag}
-                  className="rounded-full border px-3.5 py-1.5 font-mono text-[11px] font-medium transition-colors duration-200"
-                  style={{
-                    color: t.badgeText,
-                    backgroundColor: t.badgeBg,
-                    borderColor: `${t.cardBorder}aa`,
-                  }}
+                  className="accent-tint rounded-full border px-3.5 py-1.5 font-mono text-[11px] font-medium transition-colors duration-200"
+                  style={
+                    {
+                      "--accent-text": t.badgeText,
+                      "--accent-bg": t.badgeBg,
+                    } as CSSProperties
+                  }
                 >
                   {tag}
                 </span>
@@ -156,7 +157,7 @@ function FeaturedProjectSlide({
                   target="_blank"
                   rel="noreferrer noopener"
                   data-cursor="open"
-                  className="inline-flex items-center justify-center gap-2 rounded-full border border-white/15 bg-[#161b22] px-5 py-3 text-[13px] font-medium text-slate-100 transition-all duration-200 hover:-translate-y-0.5 hover:border-white/30 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/40"
+                  className="inline-flex items-center justify-center gap-2 rounded-full border border-line bg-surface-2 px-5 py-3 text-[13px] font-medium text-ink transition-all duration-200 hover:-translate-y-0.5 hover:border-[var(--c-line-strong)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--c-accent)]"
                 >
                   <GitHubIcon className="size-4" />
                   View Repository
@@ -169,12 +170,14 @@ function FeaturedProjectSlide({
                 target="_blank"
                 rel="noreferrer noopener"
                 data-cursor="open"
-                className="inline-flex items-center justify-center gap-2 rounded-full border px-5 py-3 text-[13px] font-semibold transition-all duration-200 hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-                style={{
-                  backgroundColor: "rgba(36, 150, 237, 0.12)",
-                  borderColor: "rgba(36, 150, 237, 0.45)",
-                  color: "#38BDF8",
-                }}
+                className="accent-text inline-flex items-center justify-center gap-2 rounded-full border px-5 py-3 text-[13px] font-semibold transition-all duration-200 hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                style={
+                  {
+                    "--accent-text": "#38BDF8",
+                    backgroundColor: "rgba(36, 150, 237, 0.12)",
+                    borderColor: "rgba(36, 150, 237, 0.45)",
+                  } as CSSProperties
+                }
                 onMouseEnter={(e) => {
                   e.currentTarget.style.backgroundColor = "rgba(36, 150, 237, 0.24)";
                   e.currentTarget.style.borderColor = "#2496ED";
@@ -326,13 +329,15 @@ export default function Projects() {
                   data-cursor="link"
                   className={`flex items-center gap-2 rounded-full border px-4 py-2 font-mono text-[11px] font-semibold tracking-wider uppercase transition-all duration-200 sm:text-[11.5px] ${
                     isActive
-                      ? "border-[#2496ED]/60 bg-[#2496ED]/15 text-[#38BDF8] shadow-[0_0_18px_rgba(36,150,237,0.25)]"
-                      : "border-white/10 bg-[#12161D] text-slate-400 hover:border-white/25 hover:text-white"
+                      ? "border-[#2496ED]/60 bg-[#2496ED]/15 text-[#0369a1] shadow-[0_0_18px_rgba(36,150,237,0.25)] dark:text-[#38BDF8]"
+                      : "border-line bg-surface-2 text-muted hover:border-[var(--c-line-strong)] hover:text-ink"
                   }`}
                 >
                   <span
                     className={`size-1.5 rounded-full ${
-                      isActive ? "bg-[#38BDF8] shadow-[0_0_8px_#38BDF8]" : "bg-slate-500"
+                      isActive
+                        ? "bg-[#38BDF8] shadow-[0_0_8px_#38BDF8]"
+                        : "bg-[var(--c-faint)]"
                     }`}
                   />
                   {p.index} · {p.id.toUpperCase()}
@@ -343,11 +348,11 @@ export default function Projects() {
 
           <div className="flex items-center gap-3">
             <p
-              className="font-mono text-[12px] font-semibold tracking-[0.2em] text-slate-300 sm:text-[13px]"
+              className="font-mono text-[12px] font-semibold tracking-[0.2em] text-muted dark:text-slate-300 sm:text-[13px]"
               aria-live="polite"
             >
-              <span className="text-[#38BDF8]">{currentProject.index}</span>
-              <span className="text-slate-500"> / </span>
+              <span className="text-[#0369a1] dark:text-[#38BDF8]">{currentProject.index}</span>
+              <span className="text-faint"> / </span>
               {String(total).padStart(2, "0")}
             </p>
 
@@ -357,7 +362,7 @@ export default function Projects() {
                 onClick={prev}
                 aria-label="Previous project"
                 data-cursor="link"
-                className="grid size-10 place-items-center rounded-full border border-white/12 bg-surface text-slate-300 transition-all duration-200 hover:border-white/30 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/50 active:scale-95 sm:size-11"
+                className="grid size-10 place-items-center rounded-full border border-line bg-surface text-muted transition-all duration-200 hover:border-[var(--c-line-strong)] hover:text-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--c-accent)] active:scale-95 sm:size-11"
               >
                 <ArrowLeft className="size-4" />
               </button>
@@ -366,7 +371,7 @@ export default function Projects() {
                 onClick={next}
                 aria-label="Next project"
                 data-cursor="link"
-                className="grid size-10 place-items-center rounded-full border border-white/12 bg-surface text-slate-300 transition-all duration-200 hover:border-white/30 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/50 active:scale-95 sm:size-11"
+                className="grid size-10 place-items-center rounded-full border border-line bg-surface text-muted transition-all duration-200 hover:border-[var(--c-line-strong)] hover:text-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--c-accent)] active:scale-95 sm:size-11"
               >
                 <ArrowRight className="size-4" />
               </button>
@@ -421,12 +426,12 @@ export default function Projects() {
                 aria-label={`Show project ${p.index}: ${p.title}`}
                 onClick={() => goTo(idx)}
                 data-cursor="link"
-                className="h-2 rounded-full transition-all duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/50"
+                className="h-2 rounded-full transition-all duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--c-accent)]"
                 style={{
                   width: isActive ? 28 : 8,
                   backgroundColor: isActive
                     ? "#38BDF8"
-                    : "rgba(255,255,255,0.2)",
+                    : "color-mix(in srgb, var(--c-ink) 25%, transparent)",
                 }}
               />
             );

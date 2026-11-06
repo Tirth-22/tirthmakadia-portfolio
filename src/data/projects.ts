@@ -11,7 +11,7 @@ export type Project = {
   /** Optional deployed demo — falls back to repo if unset */
   demo?: string;
   visualCaption: string;
-  visual: "exchange" | "cloudwise" | "stream" | "edgecase" | "formation";
+  visual: "exchange" | "cloudwise" | "stream" | "formation";
   accent: "blue" | "amber" | "cyan" | "emerald";
   theme: {
     accentColor: string;
@@ -103,31 +103,8 @@ export const projects: Project[] = [
     theme: themeFrom("#06B6D4", "#155E75"),
   },
   {
-    id: "edgecase",
-    index: "04",
-    title: "Edge Case Generator",
-    category: "Automated Backend Test Scenario Generation",
-    summary:
-      "Automated edge case generation utility for REST APIs — derives boundary values, malformed payloads and hostile inputs from a route's contract, then runs them as a suite.",
-    architecture:
-      "openapi route → schema analyzer → boundary + mutation rules → case matrix → rest runner → report",
-    highlights: [
-      "Boundary and off-by-one values derived from field types",
-      "Payload mutation: null, empty, overflow, unicode, injection",
-      "Idempotency and status-code contract assertions",
-      "CI-friendly runner with machine-readable reports",
-    ],
-    stack: ["Java", "REST APIs", "Test Automation", "JSON", "JUnit"],
-    repo: "https://github.com/Tirth-22/EdgeCaseGenerator",
-    demo: "https://github.com/Tirth-22/EdgeCaseGenerator",
-    visualCaption: "Automated test scenario mutation and case matrix runner",
-    visual: "edgecase",
-    accent: "emerald",
-    theme: themeFrom("#10B981", "#065F46"),
-  },
-  {
     id: "formation",
-    index: "05",
+    index: "04",
     title: "Football Formation Generator",
     category: "Tactical Lineup & Squad Grouping Engine",
     summary:

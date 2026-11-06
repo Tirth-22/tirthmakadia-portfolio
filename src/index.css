@@ -22,6 +22,11 @@
   --color-line: var(--c-line);
   --color-line-strong: var(--c-line-strong);
   --color-danger: var(--c-danger);
+
+  /* Recessed diagram canvas + diagram node chips */
+  --color-stage: var(--c-stage);
+  --color-node: var(--c-node);
+  --color-node-2: var(--c-node-2);
 }
 
 /* Light theme — crisp slate canvas, emerald contrast */
@@ -32,7 +37,7 @@
   --c-surface-2: #f1f5f9;
   --c-ink: #0f172a;
   --c-muted: #475569;
-  --c-faint: #94a3b8;
+  --c-faint: #64748b;
   --c-accent: #059669;
   --c-accent-2: #65a30d;
   --c-line: rgba(15, 23, 42, 0.08);
@@ -44,6 +49,22 @@
   --grid-line: rgba(15, 23, 42, 0.09);
   --grain-opacity: 0.025;
   --glow-line: rgba(5, 150, 105, 0.15);
+
+  /* Recessed diagram stage (architecture / project visuals) */
+  --c-stage: #eef2f7;
+  --c-node: #ffffff;
+  --c-node-2: #f8fafc;
+  --scan-blend: multiply;
+
+  /* GitHub contribution square scale — light palette */
+  --gh-0: #ebedf0;
+  --gh-1: #9be9a8;
+  --gh-2: #40c463;
+  --gh-3: #30a14e;
+  --gh-4: #216e39;
+
+  /* Soft elevation behind the LeetCode topic bubbles */
+  --bubble-shadow: rgba(15, 23, 42, 0.16);
 }
 
 /* Dark theme — deep obsidian/slate canvas, graphite surfaces, primary emerald & acid lime */
@@ -66,6 +87,22 @@
   --grid-line: rgba(255, 255, 255, 0.085);
   --grain-opacity: 0.035;
   --glow-line: rgba(16, 185, 129, 0.12);
+
+  /* Recessed diagram stage (architecture / project visuals) */
+  --c-stage: #07090c;
+  --c-node: #11151d;
+  --c-node-2: #0e1620;
+  --scan-blend: screen;
+
+  /* GitHub contribution square scale — dark palette */
+  --gh-0: #161b22;
+  --gh-1: #0e4429;
+  --gh-2: #006d32;
+  --gh-3: #26a641;
+  --gh-4: #39d353;
+
+  /* Soft elevation behind the LeetCode topic bubbles */
+  --bubble-shadow: rgba(0, 0, 0, 0.5);
 }
 
 /* ------------------------------------------------------------------
@@ -167,27 +204,27 @@
     background:
       radial-gradient(
         130% 100% at 50% -25%,
-        rgba(16, 185, 129, 0.05),
+        color-mix(in srgb, var(--c-accent) 6%, transparent),
         transparent 62%
       ),
-      rgba(18, 22, 29, 0.85);
+      color-mix(in srgb, var(--c-surface) 88%, transparent);
     backdrop-filter: blur(16px) saturate(130%);
     -webkit-backdrop-filter: blur(16px) saturate(130%);
     border: 1px solid var(--c-line);
   }
 
-  /* Dark graphite card surface — hairline border + restrained illumination */
+  /* Card surface — hairline border + restrained illumination */
   .panel {
     background:
       radial-gradient(
         130% 100% at 50% -20%,
-        rgba(16, 185, 129, 0.04),
+        color-mix(in srgb, var(--c-accent) 4%, transparent),
         transparent 60%
       ),
       linear-gradient(
         180deg,
-        #12161d 0%,
-        #161b24 100%
+        var(--c-surface) 0%,
+        var(--c-surface-2) 100%
       );
     border: 1px solid var(--c-line);
   }
@@ -292,14 +329,23 @@
 
   /* Micro-tags (e.g. Java 21, AWS, Spring Boot) — emerald accent */
   .chip-ice {
+    color: color-mix(in srgb, var(--c-accent) 72%, #0f172a);
+    border-color: color-mix(in srgb, var(--c-accent) 30%, transparent);
+    background: color-mix(in srgb, var(--c-accent) 7%, transparent);
+  }
+  .dark .chip-ice {
     color: #34d399;
     border-color: rgba(16, 185, 129, 0.22);
     background: rgba(16, 185, 129, 0.06);
   }
   .chip-ice:hover {
+    color: color-mix(in srgb, var(--c-accent) 85%, #0f172a);
+    border-color: color-mix(in srgb, var(--c-accent) 45%, transparent);
+    box-shadow: 0 4px 16px -8px rgba(16, 185, 129, 0.3);
+  }
+  .dark .chip-ice:hover {
     color: #6ee7b7;
     border-color: rgba(16, 185, 129, 0.45);
-    box-shadow: 0 4px 16px -8px rgba(16, 185, 129, 0.3);
   }
 
   .label-mono {
@@ -312,13 +358,49 @@
   .text-gradient {
     background-image: linear-gradient(
       100deg,
-      #059669 0%,
-      #34d399 55%,
-      #10b981 100%
+      #047857 0%,
+      #059669 55%,
+      #047857 100%
     );
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
+  }
+  .dark .text-gradient {
+    background-image: linear-gradient(
+      100deg,
+      #059669 0%,
+      #34d399 55%,
+      #10b981 100%
+    );
+  }
+
+  /* Project / timeline accent text.
+     The bright accent is tuned for the dark canvas — on the light canvas it
+     is mixed toward ink so 11–13px mono labels stay legible. */
+  .accent-text {
+    color: color-mix(in srgb, var(--accent-text) 68%, #0f172a);
+  }
+  .dark .accent-text {
+    color: var(--accent-text);
+  }
+
+  /* Same idea for accent-tinted chip backgrounds */
+  .accent-tint {
+    background-color: color-mix(in srgb, var(--accent-text) 9%, #ffffff);
+    border-color: color-mix(in srgb, var(--accent-text) 45%, transparent);
+  }
+  .dark .accent-tint {
+    background-color: var(--accent-bg);
+    border-color: color-mix(in srgb, var(--accent-text) 60%, transparent);
+  }
+
+  /* SVG fill variant of the same accent tuning */
+  .accent-fill {
+    fill: color-mix(in srgb, var(--accent-text) 68%, #0f172a);
+  }
+  .dark .accent-fill {
+    fill: var(--accent-text);
   }
 
   /* Animated gradient border that follows the pointer */
@@ -380,7 +462,7 @@
     );
     animation: scan-sweep 5.5s cubic-bezier(0.65, 0, 0.35, 1) infinite;
     pointer-events: none;
-    mix-blend-mode: screen;
+    mix-blend-mode: var(--scan-blend);
   }
 
   .marquee-track {
@@ -632,11 +714,10 @@
 }
 
 /* ------------------------------------------------------------------
-   Cursor — pointer (finger) style everywhere
+   Cursor — finger pointer over clickable things, plain arrow elsewhere
 ------------------------------------------------------------------ */
-html,
-html * {
-  cursor: pointer;
+html {
+  cursor: default;
 }
 html input,
 html textarea,
@@ -646,7 +727,11 @@ html [contenteditable="true"] {
 }
 html button,
 html a,
+html label,
+html summary,
 html [role="button"],
+html [role="link"],
+html [role="tab"],
 html [data-cursor] {
   cursor: pointer;
 }

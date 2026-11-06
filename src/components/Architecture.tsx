@@ -15,16 +15,17 @@ export default function Architecture() {
           label="How I Build"
           title={
             <>
-              Trace a <span className="text-gradient">request</span> through
-              the stack.
+              How I build systems and <span className="text-gradient">deploy to AWS</span>.
             </>
           }
-          description="A simple example of how i build — watch a request travel from client to data layer, then a CI/CD pipeline deploy end-to-end onto AWS."
+          description="A continuous end-to-end look at how application requests flow through microservices, stream through Kafka, and continuously deploy onto AWS cloud infrastructure."
         />
 
-        <Reveal>
-          <ArchitectureViz />
-        </Reveal>
+        <div className="mt-8">
+          <Reveal>
+            <ArchitectureViz />
+          </Reveal>
+        </div>
       </div>
     </section>
   );

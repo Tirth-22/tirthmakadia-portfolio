@@ -137,8 +137,12 @@ export default function Contact() {
                 </button>
 
                 <a
-                  href={`mailto:${profile.email}`}
-                  data-cursor="link"
+                  href={`https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(
+                    profile.email,
+                  )}`}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  data-cursor="open"
                   className="inline-flex items-center gap-2.5 rounded-full border border-line bg-surface-2 px-6 py-3.5 text-sm font-medium transition-all duration-300 hover:border-[var(--c-accent)] hover:text-[var(--c-accent)]"
                 >
                   <Mail className="size-4" />

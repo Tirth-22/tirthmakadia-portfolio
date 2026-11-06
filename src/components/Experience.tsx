@@ -18,7 +18,7 @@ import { useResume } from "../lib/ui";
 const UNFOLD_EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
 /** one IntersectionObserver per timeline row (framer whileInView) */
-const VIEWPORT = { once: true, amount: 0.25 } as const;
+const VIEWPORT = { once: false, amount: 0.25 } as const;
 
 /** label relay — each row resolves its own variants, children inherit the label */
 const RELAY: Variants = { hidden: {}, show: {} };
@@ -42,23 +42,20 @@ export default function Experience() {
 
   /* ---- unfold choreography (static variants when reduced motion) ---- */
 
-  /* card shell: hidden by clip + opacity + transform, opens upward */
+  /* card shell: slides in from timeline side (right card from right, left card from left) */
   const cardVariants: Variants = reduce
     ? RELAY
     : {
-        hidden: {
+        hidden: (side: "left" | "right") => ({
           opacity: 0,
-          y: 35,
-          scaleY: 0.94,
-          clipPath: "inset(100% 0% 0% 0%)",
-        },
+          x: side === "right" ? 80 : -80,
+          y: 0,
+        }),
         show: {
           opacity: 1,
+          x: 0,
           y: 0,
-          scaleY: 1,
-          /* settle past the box so the card glow is never clipped at rest */
-          clipPath: "inset(-20% -20% -20% -20%)",
-          transition: { duration: 0.95, ease: UNFOLD_EASE },
+          transition: { duration: 0.85, ease: [0.16, 1, 0.3, 1] },
         },
       };
 
@@ -148,7 +145,7 @@ export default function Experience() {
           {/* base rail — always continuous */}
           <span
             aria-hidden
-            className="absolute inset-y-0 left-6 w-px bg-white/10 md:left-[calc(50%-0.5px)]"
+            className="absolute inset-y-0 left-6 w-px bg-line md:left-[calc(50%-0.5px)]"
           />
           {/* progress rail — illuminates with scroll */}
           <motion.span
@@ -175,6 +172,7 @@ export default function Experience() {
                   initial="hidden"
                   whileInView="show"
                   viewport={VIEWPORT}
+                  custom={side}
                   variants={RELAY}
                   className={`relative flex flex-col md:flex-row md:items-center md:justify-between ${
                     side === "left" ? "md:flex-row-reverse" : ""
@@ -213,7 +211,7 @@ export default function Experience() {
                   <span className="absolute top-1/2 left-6 block z-20 -translate-x-1/2 -translate-y-1/2 md:left-1/2">
                     <motion.span
                       variants={nodeVariants}
-                      className="relative grid size-9 place-items-center rounded-full border border-white/15 bg-[var(--c-canvas)]"
+                      className="relative grid size-9 place-items-center rounded-full border border-line bg-[var(--c-canvas)]"
                       style={{ boxShadow: `0 0 24px -8px ${accent}` }}
                     >
                       {/* outer glow — lights up once the card lands */}
@@ -235,10 +233,10 @@ export default function Experience() {
                     </motion.span>
                   </span>
 
-                  {/* ---------------------------------------- card (unfolds) */}
+                  {/* ---------------------------------------- card (slides in from left/right) */}
                   <motion.div
+                    custom={side}
                     variants={cardVariants}
-                    style={{ transformOrigin: "bottom" } as CSSProperties}
                     className="ml-14 md:ml-0 md:w-5/12"
                   >
                     <article
@@ -246,7 +244,7 @@ export default function Experience() {
                       style={
                         {
                           borderColor: `${accent}40`,
-                          background: `linear-gradient(155deg, ${accent}1F 0%, rgba(9,12,15,0.94) 55%)`,
+                          background: `linear-gradient(155deg, ${accent}12 0%, var(--c-stage) 45%)`,
                           boxShadow: `0 34px 60px -48px ${accent}`,
                         } as CSSProperties
                       }
@@ -263,18 +261,20 @@ export default function Experience() {
                       <motion.div variants={contentVariants} className="relative">
                         <div className="flex flex-wrap items-start justify-between gap-2">
                           <span
-                            className="rounded-md border border-white/10 bg-black/40 px-2.5 py-1 font-mono text-[10px] font-bold tracking-[0.16em] uppercase"
-                            style={{ color: accent }}
+                            className="accent-text rounded-md border border-line bg-surface px-2.5 py-1 font-mono text-[10px] font-bold tracking-[0.16em] uppercase"
+                            style={
+                              { "--accent-text": accent } as CSSProperties
+                            }
                           >
                             Phase {p.phase} — {p.category}
                           </span>
-                          <span className="flex items-center gap-1.5 font-mono text-[11px] text-faint">
+                          <span className="flex items-center gap-1.5 font-mono text-[11px] text-muted">
                             <Calendar className="size-3" />
                             {p.period}
                           </span>
                         </div>
 
-                        <h3 className="mt-4 flex items-center gap-2 text-lg font-semibold tracking-tight text-white sm:text-xl">
+                        <h3 className="mt-4 flex items-center gap-2 text-lg font-semibold tracking-tight text-ink sm:text-xl">
                           {p.title}
                           <Icon
                             className="size-4 shrink-0"
@@ -284,8 +284,10 @@ export default function Experience() {
 
                         {p.org && (
                           <p
-                            className="mt-1.5 font-mono text-[12px] tracking-wide"
-                            style={{ color: accent }}
+                            className="accent-text mt-1.5 font-mono text-[12px] tracking-wide"
+                            style={
+                              { "--accent-text": accent } as CSSProperties
+                            }
                           >
                             {p.org}
                           </p>
@@ -304,13 +306,13 @@ export default function Experience() {
                         </div>
 
                         {p.href && (
-                          <div className="mt-4 border-t border-white/[0.06] pt-3.5">
+                          <div className="mt-4 border-t border-line pt-3.5">
                             <a
                               href={p.href}
                               target="_blank"
                               rel="noreferrer"
                               data-cursor="link"
-                              className="inline-flex items-center gap-1.5 font-mono text-[11.5px] text-muted transition-colors duration-200 hover:text-white"
+                              className="inline-flex items-center gap-1.5 font-mono text-[11.5px] text-muted transition-colors duration-200 hover:text-ink"
                             >
                               {p.hrefLabel}
                               <ArrowUpRight

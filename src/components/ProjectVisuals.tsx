@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import type { Project } from "../data/projects";
 
 const ACCENT: Record<string, string> = {
@@ -13,18 +14,29 @@ const ACCENT: Record<string, string> = {
   violet: "#A855F7",
 };
 
-const INK = "#FFFFFF";
-const MUTED = "#94A3B8";
-const FAINT = "#64748B";
-const CARD = "#12161D";
-const LINE = "rgba(255,255,255,.08)";
+const INK = "var(--c-ink)";
+const MUTED = "var(--c-muted)";
+const FAINT = "var(--c-faint)";
+const CARD = "var(--c-node)";
+const LINE = "var(--c-line)";
+const LINE_SOFT = "color-mix(in srgb, var(--c-ink) 7%, transparent)";
+
+/**
+ * Accent-coloured SVG text. The project accent is tuned for the dark canvas —
+ * on the light canvas it is mixed toward ink so it stays legible.
+ */
+const accentText = (c: string) =>
+  ({
+    className: "accent-fill",
+    style: { "--accent-text": c } as CSSProperties,
+  }) as const;
 
 /** Shared backdrop: deep obsidian/slate canvas + hairline grid + subtle emerald bloom. */
 function Backdrop({ c }: { c: string }) {
   return (
     <>
-      <rect width="400" height="240" fill="#090C0F" />
-      <g opacity="0.35">
+      <rect width="400" height="240" fill="var(--c-stage)" />
+      <g opacity="0.55">
         {Array.from({ length: 17 }).map((_, i) => (
           <line
             key={`v${i}`}
@@ -32,7 +44,7 @@ function Backdrop({ c }: { c: string }) {
             y1="0"
             x2={i * 25}
             y2="240"
-            stroke="rgba(255,255,255,.04)"
+            stroke={LINE_SOFT}
           />
         ))}
         {Array.from({ length: 11 }).map((_, i) => (
@@ -42,7 +54,7 @@ function Backdrop({ c }: { c: string }) {
             y1={i * 25}
             x2="400"
             y2={i * 25}
-            stroke="rgba(255,255,255,.04)"
+            stroke={LINE_SOFT}
           />
         ))}
       </g>
@@ -114,7 +126,7 @@ function Exchange({ c }: { c: string }) {
 
       <path d="M298 186 V198" stroke={c} strokeWidth="1.2" fill="none" opacity="0.7" />
       <rect x="22" y="198" width="148" height="28" rx="8" fill={CARD} stroke={c} opacity="0.95" />
-      <text x="96" y="216" textAnchor="middle" fontSize="8" fill={c} fontFamily="var(--font-mono)">
+      <text x="96" y="216" textAnchor="middle" fontSize="8" {...accentText(c)} fontFamily="var(--font-mono)">
         kafka
       </text>
       <path d="M170 212 H210" stroke={c} strokeWidth="1.2" fill="none" className="dash-flow" />
@@ -172,7 +184,7 @@ function CloudWise({ c }: { c: string }) {
       <text x="107" y="180" textAnchor="middle" fontSize="7" fill={MUTED} fontFamily="var(--font-mono)">
         user-owned account
       </text>
-      <text x="107" y="194" textAnchor="middle" fontSize="7" fill={c} fontFamily="var(--font-mono)">
+      <text x="107" y="194" textAnchor="middle" fontSize="7" {...accentText(c)} fontFamily="var(--font-mono)">
         Docker · CI/CD
       </text>
 
@@ -185,63 +197,215 @@ function CloudWise({ c }: { c: string }) {
       <text x="298" y="180" textAnchor="middle" fontSize="7" fill={MUTED} fontFamily="var(--font-mono)">
         recommendations
       </text>
-      <text x="298" y="194" textAnchor="middle" fontSize="7" fill={c} fontFamily="var(--font-mono)">
+      <text x="298" y="194" textAnchor="middle" fontSize="7" {...accentText(c)} fontFamily="var(--font-mono)">
         CloudWatch
       </text>
     </g>
   );
 }
 
-/** 03 — Source → stream → grouping L1 → grouping L2 → result. */
+/** 03 — StreamAPI Grouping Utility: .stream() → groupingBy(dept) & collectingAndThen() → leaves with animated metrics. */
 function Stream({ c }: { c: string }) {
-  const stages = [
-    { x: 18, w: 70, label: "Source", sub: "collection" },
-    { x: 104, w: 70, label: "Stream", sub: ".stream()" },
-    { x: 190, w: 86, label: "Group L1", sub: "groupingBy" },
-    { x: 292, w: 90, label: "Group L2", sub: "downstream" },
+  const categories = [
+    { label: "ENG", x: 60, fillWidth: 42, trackWidth: 54, val: "74" },
+    { label: "OPS", x: 140, fillWidth: 20, trackWidth: 54, val: "32" },
+    { label: "SALES", x: 220, fillWidth: 50, trackWidth: 54, val: "88" },
+    { label: "HR", x: 300, fillWidth: 16, trackWidth: 54, val: "26" },
   ];
 
   return (
     <g>
-      {stages.map((s, i) => (
-        <g key={s.label}>
-          {i < stages.length - 1 && (
-            <path
-              d={`M${s.x + s.w} 78 H${stages[i + 1].x}`}
-              stroke={c}
-              strokeWidth="1.3"
-              fill="none"
-              className="dash-flow"
+      {/* Cyan / emerald elliptical bloom behind .stream() */}
+      <ellipse
+        cx="200"
+        cy="92"
+        rx="176"
+        ry="62"
+        fill={c}
+        opacity="0.14"
+      />
+
+      {/* Top Root: .stream() */}
+      <g>
+        <rect
+          x="152"
+          y="50"
+          width="96"
+          height="32"
+          rx="9"
+          fill={CARD}
+          stroke={c}
+          strokeWidth="1.5"
+          style={{ filter: `drop-shadow(0 0 10px ${c}55)` }}
+        />
+        <text
+          x="200"
+          y="70"
+          textAnchor="middle"
+          fontSize="9.5"
+          {...accentText(c)}
+          fontWeight="600"
+          fontFamily="var(--font-mono)"
+          letterSpacing="0.5"
+        >
+          ..stream()
+        </text>
+      </g>
+
+      {/* Connection from .stream() to downstream collectors */}
+      <path
+        d="M200 82 V97 M120 97 H280 M120 97 V108 M280 97 V108"
+        stroke={c}
+        strokeWidth="1.2"
+        strokeOpacity="0.7"
+        fill="none"
+        strokeDasharray="3 3"
+      />
+
+      {/* Moving particle down to collectors */}
+      <circle r="2.5" fill={c}>
+        <animateMotion
+          dur="2s"
+          repeatCount="indefinite"
+          path="M200 82 V97 M120 97 V108"
+        />
+      </circle>
+      <circle r="2.5" fill={c}>
+        <animateMotion
+          dur="2s"
+          begin="0.5s"
+          repeatCount="indefinite"
+          path="M200 82 V97 M280 97 V108"
+        />
+      </circle>
+
+      {/* Mid Layer: groupingBy(dept) & collectingAndThen() */}
+      <g>
+        <rect
+          x="60"
+          y="108"
+          width="120"
+          height="30"
+          rx="8"
+          fill={CARD}
+          stroke={LINE}
+          strokeWidth="1"
+        />
+        <text
+          x="120"
+          y="127"
+          textAnchor="middle"
+          fontSize="8.5"
+          fill={INK}
+          fontWeight="500"
+          fontFamily="var(--font-mono)"
+        >
+          groupingBy(dept)
+        </text>
+      </g>
+
+      <g>
+        <rect
+          x="218"
+          y="108"
+          width="132"
+          height="30"
+          rx="8"
+          fill={CARD}
+          stroke={LINE}
+          strokeWidth="1"
+        />
+        <text
+          x="284"
+          y="127"
+          textAnchor="middle"
+          fontSize="8.5"
+          fill={INK}
+          fontWeight="500"
+          fontFamily="var(--font-mono)"
+        >
+          collectingAndThen()
+        </text>
+      </g>
+
+      {/* Connecting rail from mid layer down to category leaves */}
+      <path
+        d="M60 148 H340 M87 138 V158 M167 138 V158 M247 138 V158 M327 138 V158"
+        stroke={LINE}
+        strokeWidth="1"
+        fill="none"
+      />
+
+      {/* 4 Category Leaves + Progress / Volume Bars */}
+      {categories.map((cat, idx) => {
+        const cx = cat.x + 27;
+        return (
+          <g key={cat.label}>
+            {/* Category Card */}
+            <rect
+              x={cat.x}
+              y="158"
+              width="54"
+              height="24"
+              rx="7"
+              fill={CARD}
+              stroke={LINE}
+              strokeWidth="1"
             />
-          )}
-          <rect x={s.x} y="52" width={s.w} height="52" rx="9" fill={CARD} stroke={i === 1 ? c : LINE} strokeWidth={i === 1 ? 1.2 : 1} />
-          <text x={s.x + s.w / 2} y="74" textAnchor="middle" fontSize="8.5" fill={INK} fontWeight="600" fontFamily="var(--font-sans)">
-            {s.label}
-          </text>
-          <text x={s.x + s.w / 2} y="90" textAnchor="middle" fontSize="6.5" fill={MUTED} fontFamily="var(--font-mono)">
-            {s.sub}
-          </text>
-        </g>
-      ))}
+            <text
+              x={cx}
+              y="173"
+              textAnchor="middle"
+              fontSize="8"
+              fill={INK}
+              fontWeight="600"
+              fontFamily="var(--font-mono)"
+            >
+              {cat.label}
+            </text>
 
-      <path d="M337 104 V128" stroke={c} strokeWidth="1.3" fill="none" />
+            {/* Background Track */}
+            <rect
+              x={cat.x}
+              y="190"
+              width={cat.trackWidth}
+              height="7"
+              rx="3.5"
+              fill="var(--c-line)"
+            />
 
-      <rect x="18" y="136" width="364" height="76" rx="10" fill={CARD} stroke={LINE} />
-      <text x="200" y="158" textAnchor="middle" fontSize="8" fill={FAINT} fontFamily="var(--font-mono)" letterSpacing="1.2">
-        result collection
-      </text>
-      {[
-        { x: 40, label: "dept · role" },
-        { x: 148, label: "region · team" },
-        { x: 256, label: "immutable map" },
-      ].map((leaf) => (
-        <g key={leaf.label}>
-          <rect x={leaf.x} y="170" width="96" height="26" rx="7" fill="rgba(255,255,255,.03)" stroke={c} strokeOpacity="0.35" />
-          <text x={leaf.x + 48} y="187" textAnchor="middle" fontSize="7.5" fill={c} fontFamily="var(--font-mono)">
-            {leaf.label}
-          </text>
-        </g>
-      ))}
+            {/* Glowing Metric Bar */}
+            <rect
+              x={cat.x}
+              y="190"
+              width={cat.fillWidth}
+              height="7"
+              rx="3.5"
+              fill={c}
+              fillOpacity="0.85"
+              style={{ filter: `drop-shadow(0 0 4px ${c}88)` }}
+            >
+              <animate
+                attributeName="opacity"
+                values="0.75;1;0.75"
+                dur={`${2 + idx * 0.4}s`}
+                repeatCount="indefinite"
+              />
+            </rect>
+
+            {/* Metric Value */}
+            <text
+              x={cat.x + cat.trackWidth + 6}
+              y="196"
+              fontSize="7"
+              fill={MUTED}
+              fontFamily="var(--font-mono)"
+            >
+              {cat.val}
+            </text>
+          </g>
+        );
+      })}
     </g>
   );
 }
@@ -289,18 +453,18 @@ function Formation({ c }: { c: string }) {
       />
 
       {/* Halfway line & center circle */}
-      <line x1="148" y1="24" x2="148" y2="216" stroke="rgba(255,255,255,.08)" strokeWidth="1" strokeDasharray="3 3" />
-      <circle cx="148" cy="120" r="28" fill="none" stroke="rgba(255,255,255,.08)" strokeWidth="1" />
+      <line x1="148" y1="24" x2="148" y2="216" stroke={LINE} strokeWidth="1" strokeDasharray="3 3" />
+      <circle cx="148" cy="120" r="28" fill="none" stroke={LINE} strokeWidth="1" />
       <circle cx="148" cy="120" r="2" fill={c} opacity="0.8" />
 
       {/* Penalty boxes */}
-      <rect x="24" y="68" width="42" height="104" rx="3" fill="none" stroke="rgba(255,255,255,.07)" />
-      <rect x="24" y="88" width="16" height="64" rx="2" fill="none" stroke="rgba(255,255,255,.05)" />
-      <circle cx="50" cy="120" r="1.5" fill="rgba(255,255,255,.2)" />
+      <rect x="24" y="68" width="42" height="104" rx="3" fill="none" stroke={LINE} />
+      <rect x="24" y="88" width="16" height="64" rx="2" fill="none" stroke={LINE_SOFT} />
+      <circle cx="50" cy="120" r="1.5" fill="var(--c-faint)" />
 
-      <rect x="230" y="68" width="42" height="104" rx="3" fill="none" stroke="rgba(255,255,255,.07)" />
-      <rect x="256" y="88" width="16" height="64" rx="2" fill="none" stroke="rgba(255,255,255,.05)" />
-      <circle cx="248" cy="120" r="1.5" fill="rgba(255,255,255,.2)" />
+      <rect x="230" y="68" width="42" height="104" rx="3" fill="none" stroke={LINE} />
+      <rect x="256" y="88" width="16" height="64" rx="2" fill="none" stroke={LINE_SOFT} />
+      <circle cx="248" cy="120" r="1.5" fill="var(--c-faint)" />
 
       {/* Tactical Pass Flow Vectors */}
       {passFlows.map((d, i) => (
@@ -360,7 +524,7 @@ function Formation({ c }: { c: string }) {
       ))}
 
       {/* Pitch Top HUD Pill */}
-      <rect x="34" y="32" width="94" height="16" rx="8" fill="rgba(0,0,0,.65)" stroke="rgba(255,255,255,.1)" />
+      <rect x="34" y="32" width="94" height="16" rx="8" fill="var(--c-surface-2)" stroke={LINE} />
       <circle cx="43" cy="40" r="2.5" fill={c} />
       <text x="50" y="43" fontSize="6.5" fill={INK} fontFamily="var(--font-mono)" letterSpacing="0.8">
         4-3-3 LINEUP
@@ -371,7 +535,7 @@ function Formation({ c }: { c: string }) {
       <text x="294" y="44" fontSize="7" fill={FAINT} fontFamily="var(--font-mono)" letterSpacing="1.2">
         SQUAD GROUPING
       </text>
-      <line x1="294" y1="50" x2="366" y2="50" stroke="rgba(255,255,255,.07)" />
+      <line x1="294" y1="50" x2="366" y2="50" stroke={LINE} />
 
       {/* Grouping Rows */}
       {groups.map((g, idx) => (
@@ -380,7 +544,7 @@ function Formation({ c }: { c: string }) {
           <text x="10" y="5.5" fontSize="7.5" fill={INK} fontWeight="600" fontFamily="var(--font-mono)">
             {g.label}
           </text>
-          <text x="72" y="5.5" fontSize="7" fill={c} textAnchor="end" fontFamily="var(--font-mono)">
+          <text x="72" y="5.5" fontSize="7" {...accentText(c)} textAnchor="end" fontFamily="var(--font-mono)">
             [{g.count}]
           </text>
           <text x="10" y="15" fontSize="6" fill={MUTED} fontFamily="var(--font-mono)">
@@ -394,92 +558,8 @@ function Formation({ c }: { c: string }) {
       <text x="329" y="186" textAnchor="middle" fontSize="6.5" fill={FAINT} fontFamily="var(--font-mono)">
         SQUAD GROUP
       </text>
-      <text x="329" y="197" textAnchor="middle" fontSize="7.5" fill={c} fontWeight="600" fontFamily="var(--font-mono)">
+      <text x="329" y="197" textAnchor="middle" fontSize="7.5" {...accentText(c)} fontWeight="600" fontFamily="var(--font-mono)">
         11 players
-      </text>
-    </g>
-  );
-}
-
-/** 04 — Edge Case Generator: request mutations + case matrix. */
-function EdgeCase({ c }: { c: string }) {
-  const requests = [
-    { body: "qty: -1", code: "400", ok: false },
-    { body: "qty: null", code: "400", ok: false },
-    { body: "qty: 1e999", code: "400", ok: false },
-    { body: "id: ../../etc/passwd", code: "403", ok: false },
-    { body: "qty: 2147483648", code: "400", ok: false },
-  ];
-
-  const defects = new Set([7, 16, 23]);
-  const cells = Array.from({ length: 30 }, (_, i) => i);
-
-  return (
-    <g>
-      {/* request / response panel */}
-      <rect x="24" y="24" width="176" height="192" rx="11" fill={CARD} stroke={LINE} />
-      <text x="38" y="45" fontSize="7.5" fill={FAINT} fontFamily="var(--font-mono)" letterSpacing="1.2">
-        POST /api/orders
-      </text>
-      <path d="M38 53 H186" stroke="rgba(255,255,255,.08)" />
-      {requests.map((r, i) => (
-        <g key={r.body}>
-          <text x="38" y={72 + i * 26} fontSize="7.5" fill={MUTED} fontFamily="var(--font-mono)">
-            {r.body}
-          </text>
-          <rect
-            x="152"
-            y={62 + i * 26}
-            width="34"
-            height="14"
-            rx="7"
-            fill="rgba(239,68,68,.12)"
-            stroke="rgba(239,68,68,.4)"
-          />
-          <text x="169" y={72 + i * 26} textAnchor="middle" fontSize="7" fill="#F87171" fontFamily="var(--font-mono)">
-            {r.code}
-          </text>
-        </g>
-      ))}
-      <text x="38" y="206" fontSize="7" fill={c} fontFamily="var(--font-mono)">
-        ✓ contract held — no 5xx
-      </text>
-
-      {/* case matrix */}
-      <rect x="212" y="24" width="164" height="192" rx="11" fill={CARD} stroke={LINE} />
-      <text x="226" y="45" fontSize="7.5" fill={FAINT} fontFamily="var(--font-mono)" letterSpacing="1.2">
-        EDGE CASE MATRIX
-      </text>
-      {cells.map((i) => {
-        const col = i % 6;
-        const row = Math.floor(i / 6);
-        const defect = defects.has(i);
-        return (
-          <rect
-            key={i}
-            x={226 + col * 23}
-            y={58 + row * 23}
-            width="18"
-            height="18"
-            rx="5"
-            fill={defect ? "#EF4444" : c}
-            opacity={defect ? 0.9 : 0.16 + ((i * 7) % 5) * 0.14}
-          >
-            <animate
-              attributeName="opacity"
-              values={`${defect ? 0.9 : 0.2};${defect ? 0.9 : 0.75};${defect ? 0.9 : 0.2}`}
-              dur={`${2.6 + (i % 5) * 0.4}s`}
-              repeatCount="indefinite"
-            />
-          </rect>
-        );
-      })}
-      <path d="M226 186 H362" stroke="rgba(255,255,255,.08)" />
-      <text x="226" y="204" fontSize="7.5" fill={INK} fontFamily="var(--font-mono)">
-        47 generated
-      </text>
-      <text x="362" y="204" textAnchor="end" fontSize="7.5" fill="#F87171" fontFamily="var(--font-mono)">
-        6 defects
       </text>
     </g>
   );
@@ -509,7 +589,6 @@ export default function ProjectVisual({
         {variant === "exchange" && <Exchange c={c} />}
         {variant === "cloudwise" && <CloudWise c={c} />}
         {variant === "stream" && <Stream c={c} />}
-        {variant === "edgecase" && <EdgeCase c={c} />}
         {variant === "formation" && <Formation c={c} />}
       </svg>
     </div>
