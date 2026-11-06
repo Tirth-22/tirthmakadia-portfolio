@@ -40,7 +40,7 @@ export default function Stack() {
                       <span className="grid size-10 place-items-center rounded-xl border border-line bg-surface-2 text-[var(--c-accent)] transition-all duration-500 group-hover:border-[var(--c-accent)] group-hover:shadow-[0_0_24px_-8px_var(--c-accent)]">
                         <Icon className="size-4.5" />
                       </span>
-                      <span className="font-mono text-[9.5px] tracking-[0.16em] text-faint uppercase">
+                      <span className="font-mono text-[11px] tracking-[0.16em] text-faint uppercase">
                         {group.caption}
                       </span>
                     </div>
@@ -78,7 +78,7 @@ export default function Stack() {
         {/* ------------------------------------------- concepts strip */}
         <Reveal delay={0.05}>
           <div className="mt-5 flex flex-wrap items-center gap-2.5 rounded-2xl border border-line bg-surface p-4">
-            <span className="mr-1 flex items-center gap-2 pr-3 font-mono text-[10px] tracking-[0.16em] text-faint uppercase">
+            <span className="mr-1 flex items-center gap-2 pr-3 font-mono text-[11px] tracking-[0.16em] text-faint uppercase">
               <Sparkles className="size-3.5 text-[var(--c-accent)]" />
               design notes
             </span>
@@ -100,7 +100,7 @@ export default function Stack() {
                 {c}
               </span>
             ))}
-            <span className="ml-auto hidden items-center gap-2 font-mono text-[10px] text-faint md:flex">
+            <span className="ml-auto hidden items-center gap-2 font-mono text-[11px] text-faint md:flex">
               <Layers className="size-3.5" />
               <Boxes className="size-3.5" />
               12-factor

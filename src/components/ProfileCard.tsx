@@ -45,11 +45,11 @@ export default function ProfileCard() {
       <div className="holo-border group relative overflow-hidden rounded-[26px] border border-line bg-surface shadow-[0_40px_120px_-60px_rgba(0,0,0,0.95)]">
         {/* card header */}
         <div className="flex items-center justify-between border-b border-line px-4 py-3">
-          <span className="flex items-center gap-2 font-mono text-[10px] tracking-[0.2em] text-faint uppercase">
+          <span className="flex items-center gap-2 font-mono text-[11px] tracking-[0.2em] text-faint uppercase">
             <Radar className="size-3.5 text-[var(--c-accent)]" />
             profile.json
           </span>
-          <span className="flex items-center gap-1.5 font-mono text-[10px] tracking-[0.14em] text-[var(--c-accent-2)] uppercase">
+          <span className="flex items-center gap-1.5 font-mono text-[11px] tracking-[0.14em] text-[var(--c-accent-2)] uppercase">
             <span className="status-dot scale-75" />
             live
           </span>
@@ -72,7 +72,7 @@ export default function ProfileCard() {
                 <div className="mx-auto grid size-28 place-items-center rounded-2xl border border-line bg-surface font-mono text-4xl font-semibold tracking-tighter text-gradient">
                   {profile.monogram}
                 </div>
-                <p className="mt-4 font-mono text-[10px] tracking-[0.24em] text-faint uppercase">
+                <p className="mt-4 font-mono text-[11px] tracking-[0.24em] text-faint uppercase">
                   avatar offline
                 </p>
               </div>
@@ -130,7 +130,7 @@ export default function ProfileCard() {
         </div>
 
         {/* card footer */}
-        <div className="flex items-center justify-between px-4 py-3 font-mono text-[10px] tracking-[0.14em] text-faint uppercase">
+        <div className="flex items-center justify-between px-4 py-3 font-mono text-[11px] tracking-[0.14em] text-faint uppercase">
           <span>uptime 100%</span>
           <span className="text-[var(--c-accent-2)]">● systems ready</span>
         </div>
@@ -151,9 +151,11 @@ export default function ProfileCard() {
             initial={{ opacity: 0, scale: 0.8, y: 12 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             transition={{ delay: 1 + i * 0.12, duration: 0.6, ease: EASE }}
-            className={`chip absolute z-10 hidden whitespace-nowrap bg-surface/90 backdrop-blur-md sm:inline-flex ${
-              positions[i] ?? "top-4 left-full ml-3"
-            }`}
+            className={`chip absolute z-10 hidden whitespace-nowrap bg-surface/90 backdrop-blur-md ${
+              (positions[i] ?? "").includes("right-full")
+                ? "lg:inline-flex"
+                : "sm:inline-flex"
+            } ${positions[i] ?? "top-4 left-full ml-3"}`}
             style={{ animation: `float-y ${5.5 + i * 0.6}s ease-in-out ${tag.delay}s infinite` }}
           >
             <span className="size-1.5 rounded-full bg-[var(--c-accent)]" />

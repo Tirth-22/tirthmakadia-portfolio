@@ -33,7 +33,7 @@ export default function ArchitectureViz() {
       </div>
 
       {/* ---------------- Desktop Unified SVG Canvas ---------------- */}
-      <div className="hidden md:block relative w-full overflow-hidden rounded-xl border border-line bg-stage p-4 shadow-inner">
+      <div className="hidden lg:block relative w-full overflow-hidden rounded-xl border border-line bg-stage p-4 shadow-inner">
         <svg
           viewBox={`0 0 ${CANVAS.w} ${CANVAS.h}`}
           className="h-auto w-full max-h-[440px]"
@@ -381,7 +381,7 @@ export default function ArchitectureViz() {
       </div>
 
       {/* ---------------- Mobile Responsive Flow (< 768px) ---------------- */}
-      <div className="md:hidden flex flex-col gap-5">
+      <div className="lg:hidden flex flex-col gap-5">
         <div className="flex flex-col gap-2.5">
           {ARCH_NODES.map((node) => (
             <div
@@ -390,7 +390,7 @@ export default function ArchitectureViz() {
             >
               <div className="flex items-center justify-between">
                 <h4 className="text-[14px] font-bold text-ink">{node.title}</h4>
-                <span className="font-mono text-[10.5px] text-muted">{node.sub}</span>
+                <span className="font-mono text-[11px] text-muted">{node.sub}</span>
               </div>
             </div>
           ))}
@@ -405,7 +405,7 @@ export default function ArchitectureViz() {
                 className="rounded-lg border border-line bg-surface p-2.5"
               >
                 <p className="text-[12px] font-semibold text-ink">{node.title}</p>
-                <p className="mt-0.5 font-mono text-[9px] text-muted">{node.sub}</p>
+                <p className="mt-0.5 font-mono text-[11px] text-muted">{node.sub}</p>
               </div>
             ))}
           </div>

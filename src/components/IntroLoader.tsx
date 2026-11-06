@@ -122,7 +122,7 @@ export default function IntroLoader() {
             type="button"
             onClick={skip}
             data-cursor="link"
-            className="absolute top-6 right-6 z-40 rounded-full border border-white/10 bg-white/[0.04] px-5 py-2 font-mono text-[11px] tracking-[0.2em] text-white/60 uppercase backdrop-blur-sm transition-all hover:border-white/30 hover:text-white sm:top-8 sm:right-8 sm:text-[12px]"
+            className="absolute top-[calc(1.5rem+env(safe-area-inset-top,0px))] right-[calc(1.5rem+env(safe-area-inset-right,0px))] z-40 min-h-11 rounded-full border border-white/10 bg-white/[0.04] px-5 py-2 font-mono text-[11px] tracking-[0.2em] text-white/60 uppercase backdrop-blur-sm transition-all hover:border-white/30 hover:text-white sm:top-8 sm:right-8 sm:text-[12px]"
           >
             Skip <span className="ml-1 text-white/35">[ESC]</span>
           </button>
@@ -340,7 +340,7 @@ export default function IntroLoader() {
                         {node.label}
                       </span>
                       <span
-                        className="rounded-full px-2.5 py-1 font-mono text-[10px] tracking-wider"
+                        className="rounded-full px-2.5 py-1 font-mono text-[11px] tracking-wider"
                         style={{
                           color: "#10B981",
                           background: "rgba(16,185,129,0.12)",

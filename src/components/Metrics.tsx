@@ -84,7 +84,7 @@ function StatCard({
           <span className="grid size-9 place-items-center rounded-lg border border-line bg-surface-2 text-ink/85">
             <Icon className="size-4" />
           </span>
-          <span className="font-mono text-[9px] tracking-[0.14em] text-muted uppercase">
+          <span className="font-mono text-[11px] tracking-[0.14em] text-muted uppercase">
             {note}
           </span>
         </div>
@@ -92,7 +92,7 @@ function StatCard({
           <div className="font-sans text-[26px] leading-none font-semibold tracking-tighter text-ink">
             <Counter key={value} value={value} />
           </div>
-          <div className="mt-1.5 font-mono text-[9.5px] tracking-[0.16em] text-muted uppercase">
+          <div className="mt-1.5 font-mono text-[11px] tracking-[0.16em] text-muted uppercase">
             {label}
           </div>
         </div>
@@ -186,7 +186,7 @@ export default function Metrics() {
         <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
           <div className="flex flex-wrap items-center gap-2">
             <span
-              className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 font-mono text-[9.5px] tracking-[0.16em] uppercase ${pill.className}`}
+              className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 font-mono text-[11px] tracking-[0.16em] uppercase ${pill.className}`}
             >
               <span className="status-dot scale-75" />
               {pill.label}
@@ -200,7 +200,7 @@ export default function Metrics() {
             onClick={onRefresh}
             disabled={refreshing}
             data-cursor="link"
-            className="inline-flex items-center gap-2 rounded-full border border-line bg-surface px-3.5 py-2 font-mono text-[11px] tracking-[0.12em] text-ink/85 uppercase transition-all duration-200 hover:border-[var(--c-line-strong)] hover:text-ink disabled:cursor-wait disabled:opacity-60"
+            className="inline-flex items-center gap-2 rounded-full border border-line bg-surface min-h-11 px-3.5 py-2 font-mono text-[11px] tracking-[0.12em] text-ink/85 uppercase transition-all duration-200 hover:border-[var(--c-line-strong)] hover:text-ink disabled:cursor-wait disabled:opacity-60"
           >
             <RefreshCw className={`size-3.5 ${refreshing ? "animate-spin" : ""}`} />
             {refreshing ? "Refreshing" : "Refresh"}
@@ -219,7 +219,7 @@ export default function Metrics() {
                     <p className="font-sans text-[14.5px] font-semibold tracking-tight text-ink">
                       GitHub Activity
                     </p>
-                    <span className="rounded-full border border-line bg-surface-2 px-2 py-0.5 font-mono text-[9px] text-[#57606a] dark:border-[#30363d] dark:bg-[#21262d] dark:text-[#7d8590]">
+                    <span className="rounded-full border border-line bg-surface-2 px-2 py-0.5 font-mono text-[11px] text-[#57606a] dark:border-[#30363d] dark:bg-[#21262d] dark:text-[#7d8590]">
                       Public
                     </span>
                   </div>
@@ -228,7 +228,7 @@ export default function Metrics() {
                     target="_blank"
                     rel="noreferrer noopener"
                     data-cursor="open"
-                    className="group flex items-center gap-1 font-mono text-[11px] text-[#0969da] hover:underline dark:text-[#58a6ff]"
+                    className="group inline-flex min-h-10 items-center gap-1 font-mono text-[11px] text-[#0969da] hover:underline dark:text-[#58a6ff]"
                   >
                     @{gh.username}
                     <ArrowUpRight className="size-3 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
@@ -236,7 +236,7 @@ export default function Metrics() {
                 </div>
               </div>
 
-              <div className="flex flex-wrap items-center gap-2 font-mono text-[10.5px]">
+              <div className="flex flex-wrap items-center gap-2 font-mono text-[11px]">
                 <div className="inline-flex items-center gap-1.5 rounded-md border border-line bg-surface-2 px-2.5 py-1 text-ink/85">
                   <GitCommit className="size-3 text-[#1a7f37] dark:text-[#3fb950]" />
                   <span>Commits:</span>
@@ -308,14 +308,14 @@ export default function Metrics() {
                       target="_blank"
                       rel="noreferrer noopener"
                       data-cursor="open"
-                      className="group flex items-center gap-1 font-mono text-[11px] text-muted transition-colors hover:text-[#9a5b00] dark:hover:text-[#FFA116]"
+                      className="group inline-flex min-h-10 items-center gap-1 font-mono text-[11px] text-muted transition-colors hover:text-[#9a5b00] dark:hover:text-[#FFA116]"
                     >
                       @{lc.username}
                       <ArrowUpRight className="size-3 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                     </a>
                   </div>
                 </div>
-                <span className="flex items-center gap-1.5 rounded-full border border-line bg-surface-2 px-2.5 py-1 font-mono text-[9.5px] tracking-[0.14em] text-ink/85 uppercase">
+                <span className="flex items-center gap-1.5 rounded-full border border-line bg-surface-2 px-2.5 py-1 font-mono text-[11px] tracking-[0.14em] text-ink/85 uppercase">
                   <span className="status-dot scale-75" />
                   {lc.source === "live" ? "live data" : lc.source === "unavailable" ? "unavailable" : "cached"}
                 </span>
@@ -324,7 +324,7 @@ export default function Metrics() {
               {/* Total Solved + Beats 84.4% */}
               <div className="flex flex-wrap items-baseline justify-between gap-3">
                 <div>
-                  <span className="font-mono text-[10px] tracking-[0.16em] text-muted uppercase">
+                  <span className="font-mono text-[11px] tracking-[0.16em] text-muted uppercase">
                     Total Solved
                   </span>
                   <div className="mt-1 flex items-baseline gap-2">
@@ -362,7 +362,7 @@ export default function Metrics() {
               {/* Submissions & Acceptance Metric Boxes */}
               <div className="mt-3.5 grid grid-cols-2 gap-3">
                 <div className="rounded-xl border border-line bg-surface-2/60 p-3">
-                  <span className="font-mono text-[9.5px] tracking-[0.14em] text-muted uppercase">
+                  <span className="font-mono text-[11px] tracking-[0.14em] text-muted uppercase">
                     Submissions
                   </span>
                   <p className="mt-1 font-sans text-xl font-bold tracking-tight text-[#7e22ce] dark:text-[#c084fc]">
@@ -370,7 +370,7 @@ export default function Metrics() {
                   </p>
                 </div>
                 <div className="rounded-xl border border-line bg-surface-2/60 p-3">
-                  <span className="font-mono text-[9.5px] tracking-[0.14em] text-muted uppercase">
+                  <span className="font-mono text-[11px] tracking-[0.14em] text-muted uppercase">
                     Acceptance
                   </span>
                   <p className="mt-1 font-sans text-xl font-bold tracking-tight text-[#15803d] dark:text-[#22c55e]">
@@ -380,18 +380,21 @@ export default function Metrics() {
               </div>
 
               {/* Concept Circles Cluster (LeetCode Topics) */}
-              <div className="mt-4 overflow-hidden rounded-xl border border-line/60 bg-surface-2 dark:bg-[#0c1015] p-3">
+              <div
+                className="mt-4 overflow-x-auto rounded-xl border border-line/60 bg-surface-2 dark:bg-[#0c1015] p-3"
+                style={{ WebkitOverflowScrolling: "touch" }}
+              >
                 <div className="mb-2 flex items-center justify-between">
-                  <span className="font-mono text-[9.5px] tracking-[0.16em] text-muted uppercase">
+                  <span className="font-mono text-[11px] tracking-[0.16em] text-muted uppercase">
                     DSA Topics & Concepts
                   </span>
-                  <span className="font-mono text-[9px] text-[#15803d] dark:text-[#22c55e]">
+                  <span className="font-mono text-[11px] text-[#15803d] dark:text-[#22c55e]">
                     ● Active mastery
                   </span>
                 </div>
                 <svg
                   viewBox="0 0 440 215"
-                  className="w-full h-auto max-h-[175px]"
+                  className="w-full min-w-[440px] h-auto max-h-[175px]"
                   style={{ filter: "drop-shadow(0 2px 8px var(--bubble-shadow))" }}
                 >
                   {LEETCODE_CONCEPTS.map((c, idx) => {
@@ -432,7 +435,7 @@ export default function Metrics() {
                               x={c.cx}
                               y={c.cy - 1.5}
                               textAnchor="middle"
-                              fontSize={c.r > 24 ? "7.5" : "6.5"}
+                              fontSize="11"
                               className="fill-[var(--c-muted)]"
                               fontFamily="var(--font-mono)"
                               fontWeight="500"
@@ -443,7 +446,7 @@ export default function Metrics() {
                               x={c.cx}
                               y={c.cy + 7}
                               textAnchor="middle"
-                              fontSize={c.r > 24 ? "7" : "6"}
+                              fontSize="11"
                               className="fill-[var(--c-muted)]"
                               fontFamily="var(--font-mono)"
                               fontWeight="500"
@@ -456,7 +459,7 @@ export default function Metrics() {
                             x={c.cx}
                             y={c.cy + 2.5}
                             textAnchor="middle"
-                            fontSize={c.r > 24 ? "7.5" : c.r > 19 ? "7" : "6"}
+                            fontSize="11"
                             className="fill-[var(--c-muted)]"
                             fontFamily="var(--font-mono)"
                             fontWeight="500"
@@ -484,7 +487,7 @@ export default function Metrics() {
                 target="_blank"
                 rel="noreferrer noopener"
                 data-cursor="open"
-                className="inline-flex items-center gap-1.5 rounded-full border border-line bg-surface-2 px-3.5 py-1.5 font-mono text-[11px] font-medium text-ink transition-all duration-300 hover:border-[#FFA116] hover:text-[#9a5b00] dark:hover:text-[#FFA116]"
+                className="inline-flex min-h-11 items-center gap-1.5 rounded-full border border-line bg-surface-2 px-3.5 py-1.5 font-mono text-[11px] font-medium text-ink transition-all duration-300 hover:border-[#FFA116] hover:text-[#9a5b00] dark:hover:text-[#FFA116]"
               >
                 Solve alongside me
                 <ArrowUpRight className="size-3" />
@@ -495,10 +498,10 @@ export default function Metrics() {
           {/* --------------------------------- Repository Languages Card */}
           <div className="panel min-w-0 rounded-2xl border border-line bg-surface p-5 md:p-6 lg:col-span-5 flex flex-col h-full">
             <div className="flex flex-1 flex-col">
-              <p className="mb-1.5 font-mono text-[10px] tracking-[0.18em] text-muted uppercase">
+              <p className="mb-1.5 font-mono text-[11px] tracking-[0.18em] text-muted uppercase">
                 Repository Languages
               </p>
-              <p className="mb-5 font-mono text-[10px] text-faint">
+              <p className="mb-5 font-mono text-[11px] text-faint">
                 Top languages by source bytes across active public, non-fork repos
               </p>
 
@@ -534,7 +537,7 @@ export default function Metrics() {
 
               {/* LeetCode Badges — fills remaining space */}
               <div className="mt-6 flex flex-1 flex-col border-t border-line pt-5">
-                <p className="font-mono text-[10px] tracking-[0.18em] text-muted uppercase">
+                <p className="font-mono text-[11px] tracking-[0.18em] text-muted uppercase">
                   LeetCode Badges
                 </p>
                 <div className="mt-3 grid flex-1 grid-cols-2 content-center items-center gap-3">

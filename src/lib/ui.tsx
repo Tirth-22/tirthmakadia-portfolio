@@ -42,7 +42,7 @@ function ToastViewport({ toasts }: { toasts: Toast[] }) {
   return (
     <div
       aria-live="polite"
-      className="pointer-events-none fixed inset-x-0 bottom-6 z-[95] flex flex-col items-center gap-3 px-4 sm:inset-x-auto sm:right-6 sm:items-end"
+      className="pointer-events-none fixed inset-x-0 bottom-[calc(1.5rem+env(safe-area-inset-bottom,0px))] z-[95] flex flex-col items-center gap-3 px-4 sm:inset-x-auto sm:right-6 sm:items-end"
     >
       {toasts.map((t) => (
         <div

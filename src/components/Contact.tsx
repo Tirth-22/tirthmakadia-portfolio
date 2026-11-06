@@ -56,7 +56,10 @@ export default function Contact() {
   };
 
   return (
-    <section id="contact" className="relative scroll-mt-24 pt-24 pb-10 md:pt-32">
+    <section
+      id="contact"
+      className="relative scroll-mt-24 pt-24 pb-[calc(2.5rem+env(safe-area-inset-bottom,0px))] md:pt-32"
+    >
       <div className="shell">
         {/* -------------------------------------------------- contact card */}
         <Reveal>
@@ -181,7 +184,7 @@ export default function Contact() {
                         <span className="block text-[13px] font-medium">
                           {s.label}
                         </span>
-                        <span className="block truncate font-mono text-[10px] text-faint">
+                        <span className="block truncate font-mono text-[11px] text-faint">
                           {s.description}
                         </span>
                       </span>
@@ -230,7 +233,7 @@ export default function Contact() {
             type="button"
             onClick={scrollToTop}
             data-cursor="link"
-            className="group flex items-center gap-2 rounded-full border border-line px-4 py-2 font-mono text-[11px] text-muted transition-all duration-300 hover:border-[var(--c-accent)] hover:text-[var(--c-accent)]"
+            className="group flex min-h-11 items-center gap-2 rounded-full border border-line px-4 py-2.5 font-mono text-[11px] text-muted transition-all duration-300 hover:border-[var(--c-accent)] hover:text-[var(--c-accent)]"
           >
             back to top
             <ArrowUp className="size-3.5 transition-transform duration-300 group-hover:-translate-y-0.5" />
@@ -240,7 +243,7 @@ export default function Contact() {
             type="button"
             onClick={replay}
             data-cursor="link"
-            className="group flex items-center gap-2 rounded-full border border-line px-4 py-2 font-mono text-[11px] text-muted transition-all duration-300 hover:border-[var(--c-accent)] hover:text-[var(--c-accent)]"
+            className="group flex min-h-11 items-center gap-2 rounded-full border border-line px-4 py-2.5 font-mono text-[11px] text-muted transition-all duration-300 hover:border-[var(--c-accent)] hover:text-[var(--c-accent)]"
           >
             <RotateCcw className="size-3.5 transition-transform duration-300 group-hover:-rotate-90" />
             Replay Intro

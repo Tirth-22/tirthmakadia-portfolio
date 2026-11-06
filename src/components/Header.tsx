@@ -6,7 +6,6 @@ import { scrollToId, scrollToTop, setScrollLock } from "../lib/scroll";
 import { useActiveSection, useScrolled } from "../lib/useActiveSection";
 import { useTheme } from "../lib/useTheme";
 import { useIntro } from "../lib/intro";
-import { useResume } from "../lib/ui";
 import Magnetic from "./Magnetic";
 import {
   GitHubIcon,
@@ -34,10 +33,10 @@ function ThemeToggle({
       onClick={onToggle}
       aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} theme`}
       data-cursor="link"
-      className="relative flex h-10 w-[3.9rem] shrink-0 items-center rounded-full border border-line bg-surface-2 p-1 transition-colors duration-300 hover:border-[var(--c-line-strong)] lg:h-8 lg:w-[3.4rem]"
+      className="relative flex h-11 w-[4.2rem] shrink-0 items-center rounded-full border border-line bg-surface-2 p-1 transition-colors duration-300 hover:border-[var(--c-line-strong)] xl:h-8 xl:w-[3.4rem]"
     >
       <motion.span
-        className="grid size-8 place-items-center rounded-full bg-canvas shadow-[0_2px_10px_-4px_rgba(0,0,0,0.6)] lg:size-6"
+        className="grid size-9 place-items-center rounded-full bg-canvas shadow-[0_2px_10px_-4px_rgba(0,0,0,0.6)] xl:size-6"
         animate={{ x: theme === "dark" ? 0 : 22 }}
         transition={{ type: "spring", stiffness: 480, damping: 32, mass: 0.6 }}
       >
@@ -62,7 +61,6 @@ export default function Header() {
   const scrolled = useScrolled(20);
   const { theme, toggle } = useTheme();
   const { ready } = useIntro();
-  const { setOpen: setResumeOpen } = useResume();
   const [menuOpen, setMenuOpen] = useState(false);
 
   const { scrollYProgress } = useScroll();
@@ -93,7 +91,9 @@ export default function Header() {
           initial={{ y: -70, opacity: 0 }}
           animate={ready ? { y: 0, opacity: 1 } : { y: -70, opacity: 0 }}
           transition={{ duration: 0.9, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
-          className={`relative mx-auto flex items-center justify-between gap-3 transition-all duration-500 ${
+          /* mt keeps the bar clear of the notch/status bar when the site is
+             opened as a home-screen web app (viewport-fit=cover). */
+          className={`relative mx-auto mt-[env(safe-area-inset-top,0px)] flex items-center justify-between gap-3 transition-all duration-500 ${
             scrolled
               ? "max-w-[72rem] rounded-xl px-2.5 py-1 glass shadow-[0_16px_40px_-28px_rgba(0,0,0,0.9)] md:px-3"
               : "max-w-[86rem] rounded-2xl border border-transparent bg-transparent px-3 py-2 md:px-4"
@@ -129,7 +129,7 @@ export default function Header() {
               </span>
               <span
                 className={`flex items-center gap-1.5 font-mono tracking-[0.14em] text-faint uppercase transition-all duration-500 ${
-                  scrolled ? "mt-0.5 text-[8.5px]" : "mt-1 text-[9.5px]"
+                  scrolled ? "mt-0.5 text-[10.5px]" : "mt-1 text-[11px]"
                 }`}
               >
                 <span className="status-dot scale-75" />
@@ -153,7 +153,9 @@ export default function Header() {
                   onClick={() => go(link.id)}
                   data-cursor="link"
                   className={`relative rounded-full font-medium tracking-tight transition-all duration-300 ${
-                    scrolled ? "px-2.5 py-1 text-[12px]" : "px-3 py-1.5 text-[12.5px]"
+                    scrolled
+                      ? "px-3 py-2 text-[12px]"
+                      : "px-3.5 py-2.5 text-[12.5px]"
                   }`}
                   style={{ color: isActive ? "var(--c-ink)" : "var(--c-muted)" }}
                 >
@@ -173,17 +175,21 @@ export default function Header() {
           {/* Actions */}
           <div className="flex items-center gap-2">
             <Magnetic strength={0.25} className="hidden sm:block">
-              <button
-                type="button"
-                onClick={() => setResumeOpen(true)}
+              <a
+                href={profile.resume}
+                target="_blank"
+                rel="noreferrer noopener"
                 data-cursor="open"
+                aria-label="Open resume in a new tab"
                 className={`group flex items-center gap-1.5 rounded-full border border-line bg-surface-2 font-medium tracking-tight transition-all duration-300 hover:border-[var(--c-accent)] hover:text-[var(--c-accent)] hover:shadow-[0_0_26px_-12px_var(--c-accent)] ${
-                  scrolled ? "px-3 py-1.5 text-[12px]" : "px-3.5 py-2 text-[12.5px]"
+                  scrolled
+                    ? "px-3.5 py-2 text-[12px]"
+                    : "px-4 py-2.5 text-[12.5px]"
                 }`}
               >
                 <Download className="size-3.5 transition-transform duration-300 group-hover:translate-y-0.5" />
                 Resume
-              </button>
+              </a>
             </Magnetic>
 
             <ThemeToggle theme={theme} onToggle={toggle} />
@@ -230,7 +236,7 @@ export default function Header() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.35 }}
-            className="fixed inset-0 z-[79] overflow-y-auto bg-[color-mix(in_srgb,var(--c-canvas)_92%,transparent)] px-5 pt-24 pb-10 backdrop-blur-2xl lg:hidden"
+            className="fixed inset-0 z-[79] overflow-y-auto bg-[color-mix(in_srgb,var(--c-canvas)_92%,transparent)] px-5 pt-24 pb-[calc(2.5rem+env(safe-area-inset-bottom,0px))] backdrop-blur-2xl lg:hidden"
           >
             <nav className="flex flex-col gap-1">
               {navLinks.map((link, i) => (
@@ -264,16 +270,16 @@ export default function Header() {
               transition={{ delay: 0.42, duration: 0.5 }}
               className="mt-8 flex flex-col gap-4"
             >
-              <button
-                type="button"
-                onClick={() => {
-                  setMenuOpen(false);
-                  setResumeOpen(true);
-                }}
-                className="flex items-center justify-center gap-2 rounded-full bg-[var(--c-ink)] px-5 py-3.5 text-sm font-medium text-[var(--c-canvas)]"
+              <a
+                href={profile.resume}
+                target="_blank"
+                rel="noreferrer noopener"
+                data-cursor="open"
+                onClick={() => setMenuOpen(false)}
+                className="flex min-h-12 items-center justify-center gap-2 rounded-full bg-[var(--c-ink)] px-5 py-3.5 text-sm font-medium text-[var(--c-canvas)]"
               >
                 <Download className="size-4" /> View resume
-              </button>
+              </a>
 
               <div className="flex items-center justify-between gap-2">
                 {socials.map((s) => {

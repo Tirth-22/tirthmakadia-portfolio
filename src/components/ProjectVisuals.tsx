@@ -99,18 +99,18 @@ function Exchange({ c }: { c: string }) {
       ))}
 
       <rect x="22" y="100" width="64" height="40" rx="9" fill={CARD} stroke={LINE} />
-      <text x="54" y="118" textAnchor="middle" fontSize="8.5" fill={INK} fontWeight="600" fontFamily="var(--font-sans)">
+      <text x="54" y="118" textAnchor="middle" fontSize="10.5" fill={INK} fontWeight="600" fontFamily="var(--font-sans)">
         Client
       </text>
-      <text x="54" y="131" textAnchor="middle" fontSize="6.5" fill={MUTED} fontFamily="var(--font-mono)">
+      <text x="54" y="131" textAnchor="middle" fontSize="8" fill={MUTED} fontFamily="var(--font-mono)">
         browser
       </text>
 
       <rect x="132" y="98" width="76" height="44" rx="9" fill={CARD} stroke={c} strokeWidth="1.2" />
-      <text x="170" y="117" textAnchor="middle" fontSize="8.5" fill={INK} fontWeight="600" fontFamily="var(--font-sans)">
+      <text x="170" y="117" textAnchor="middle" fontSize="10.5" fill={INK} fontWeight="600" fontFamily="var(--font-sans)">
         Gateway
       </text>
-      <text x="170" y="131" textAnchor="middle" fontSize="6.5" fill={MUTED} fontFamily="var(--font-mono)">
+      <text x="170" y="131" textAnchor="middle" fontSize="8" fill={MUTED} fontFamily="var(--font-mono)">
         jwt · route
       </text>
 
@@ -118,7 +118,7 @@ function Exchange({ c }: { c: string }) {
         <g key={s.label}>
           <rect x="250" y={s.y} width="96" height="32" rx="8" fill={CARD} stroke={LINE} />
           <circle cx="262" cy={s.y + 16} r="3" fill={c} />
-          <text x="272" y={s.y + 20} fontSize="8" fill={INK} fontFamily="var(--font-mono)">
+          <text x="272" y={s.y + 20} fontSize="10" fill={INK} fontFamily="var(--font-mono)">
             {s.label}
           </text>
         </g>
@@ -126,12 +126,12 @@ function Exchange({ c }: { c: string }) {
 
       <path d="M298 186 V198" stroke={c} strokeWidth="1.2" fill="none" opacity="0.7" />
       <rect x="22" y="198" width="148" height="28" rx="8" fill={CARD} stroke={c} opacity="0.95" />
-      <text x="96" y="216" textAnchor="middle" fontSize="8" {...accentText(c)} fontFamily="var(--font-mono)">
+      <text x="96" y="216" textAnchor="middle" fontSize="10" {...accentText(c)} fontFamily="var(--font-mono)">
         kafka
       </text>
       <path d="M170 212 H210" stroke={c} strokeWidth="1.2" fill="none" className="dash-flow" />
       <rect x="210" y="198" width="166" height="28" rx="8" fill={CARD} stroke={LINE} />
-      <text x="293" y="216" textAnchor="middle" fontSize="8" fill={INK} fontFamily="var(--font-mono)">
+      <text x="293" y="216" textAnchor="middle" fontSize="10" fill={INK} fontFamily="var(--font-mono)">
         notification-svc
       </text>
     </g>
@@ -166,10 +166,10 @@ function CloudWise({ c }: { c: string }) {
             </g>
           )}
           <rect x={s.x} y="48" width="84" height="60" rx="10" fill={CARD} stroke={i === 0 ? c : LINE} strokeWidth={i === 0 ? 1.2 : 1} />
-          <text x={s.x + 42} y="74" textAnchor="middle" fontSize="8.5" fill={INK} fontWeight="600" fontFamily="var(--font-sans)">
+          <text x={s.x + 42} y="74" textAnchor="middle" fontSize="10.5" fill={INK} fontWeight="600" fontFamily="var(--font-sans)">
             {s.label}
           </text>
-          <text x={s.x + 42} y="90" textAnchor="middle" fontSize="6.5" fill={MUTED} fontFamily="var(--font-mono)">
+          <text x={s.x + 42} y="90" textAnchor="middle" fontSize="8" fill={MUTED} fontFamily="var(--font-mono)">
             {s.sub}
           </text>
         </g>
@@ -178,26 +178,26 @@ function CloudWise({ c }: { c: string }) {
       <path d="M352 108 V128" stroke={c} strokeWidth="1.3" fill="none" className="dash-flow" />
 
       <rect x="22" y="136" width="170" height="72" rx="10" fill={CARD} stroke={c} strokeWidth="1.2" />
-      <text x="107" y="162" textAnchor="middle" fontSize="9" fill={INK} fontWeight="600" fontFamily="var(--font-sans)">
+      <text x="107" y="162" textAnchor="middle" fontSize="11" fill={INK} fontWeight="600" fontFamily="var(--font-sans)">
         AWS Deployment
       </text>
-      <text x="107" y="180" textAnchor="middle" fontSize="7" fill={MUTED} fontFamily="var(--font-mono)">
+      <text x="107" y="180" textAnchor="middle" fontSize="9" fill={MUTED} fontFamily="var(--font-mono)">
         user-owned account
       </text>
-      <text x="107" y="194" textAnchor="middle" fontSize="7" {...accentText(c)} fontFamily="var(--font-mono)">
+      <text x="107" y="194" textAnchor="middle" fontSize="9" {...accentText(c)} fontFamily="var(--font-mono)">
         Docker · CI/CD
       </text>
 
       <path d="M192 172 H218" stroke={c} strokeWidth="1.3" fill="none" className="dash-flow" />
 
       <rect x="218" y="136" width="160" height="72" rx="10" fill={CARD} stroke={LINE} />
-      <text x="298" y="162" textAnchor="middle" fontSize="9" fill={INK} fontWeight="600" fontFamily="var(--font-sans)">
+      <text x="298" y="162" textAnchor="middle" fontSize="11" fill={INK} fontWeight="600" fontFamily="var(--font-sans)">
         Monitor / Cost
       </text>
-      <text x="298" y="180" textAnchor="middle" fontSize="7" fill={MUTED} fontFamily="var(--font-mono)">
+      <text x="298" y="180" textAnchor="middle" fontSize="9" fill={MUTED} fontFamily="var(--font-mono)">
         recommendations
       </text>
-      <text x="298" y="194" textAnchor="middle" fontSize="7" {...accentText(c)} fontFamily="var(--font-mono)">
+      <text x="298" y="194" textAnchor="middle" fontSize="9" {...accentText(c)} fontFamily="var(--font-mono)">
         CloudWatch
       </text>
     </g>
@@ -258,7 +258,7 @@ function Stream({
           x="200"
           y="70"
           textAnchor="middle"
-          fontSize="9.5"
+          fontSize="12"
           {...accentText(c)}
           fontWeight="600"
           fontFamily="var(--font-mono)"
@@ -311,7 +311,7 @@ function Stream({
           x="120"
           y="127"
           textAnchor="middle"
-          fontSize="8.5"
+          fontSize="10.5"
           fill={INK}
           fontWeight="500"
           fontFamily="var(--font-mono)"
@@ -335,7 +335,7 @@ function Stream({
           x="284"
           y="127"
           textAnchor="middle"
-          fontSize="8.5"
+          fontSize="10.5"
           fill={INK}
           fontWeight="500"
           fontFamily="var(--font-mono)"
@@ -410,7 +410,7 @@ function Stream({
               x={cx}
               y="173"
               textAnchor="middle"
-              fontSize="8"
+              fontSize="10"
               fill={INK}
               fontWeight="600"
               fontFamily="var(--font-mono)"
@@ -451,7 +451,7 @@ function Stream({
             <text
               x={cat.x + cat.trackWidth + 6}
               y="196"
-              fontSize="7"
+              fontSize="9"
               fill={selectedHere ? c : MUTED}
               fontWeight={selectedHere ? 600 : 400}
               fontFamily="var(--font-mono)"
@@ -468,7 +468,7 @@ function Stream({
           x="200"
           y="224"
           textAnchor="middle"
-          fontSize="7.2"
+          fontSize="9"
           fontFamily="var(--font-mono)"
           letterSpacing="1"
           fill={inspected ? undefined : FAINT}
@@ -477,7 +477,7 @@ function Stream({
         >
           {inspected
             ? `groupingBy(dept).get("${inspected.label}") → ${inspected.val} records`
-            : "CLICK A DEPARTMENT TO INSPECT ITS GROUP"}
+            : "SELECT A DEPARTMENT TO INSPECT ITS GROUP"}
         </text>
       )}
     </g>
@@ -587,7 +587,7 @@ function Formation({ c }: { c: string }) {
             x={p.x}
             y={p.y + 14}
             textAnchor="middle"
-            fontSize="6.5"
+            fontSize="8"
             fill={INK}
             fontFamily="var(--font-mono)"
             fontWeight="600"
@@ -600,13 +600,13 @@ function Formation({ c }: { c: string }) {
       {/* Pitch Top HUD Pill */}
       <rect x="34" y="32" width="94" height="16" rx="8" fill="var(--c-surface-2)" stroke={LINE} />
       <circle cx="43" cy="40" r="2.5" fill={c} />
-      <text x="50" y="43" fontSize="6.5" fill={INK} fontFamily="var(--font-mono)" letterSpacing="0.8">
+      <text x="50" y="43" fontSize="8" fill={INK} fontFamily="var(--font-mono)" letterSpacing="0.8">
         4-3-3 LINEUP
       </text>
 
       {/* Right Telemetry / Grouping Panel */}
       <rect x="282" y="24" width="94" height="192" rx="10" fill={CARD} stroke={LINE} />
-      <text x="294" y="44" fontSize="7" fill={FAINT} fontFamily="var(--font-mono)" letterSpacing="1.2">
+      <text x="294" y="44" fontSize="9" fill={FAINT} fontFamily="var(--font-mono)" letterSpacing="1.2">
         SQUAD GROUPING
       </text>
       <line x1="294" y1="50" x2="366" y2="50" stroke={LINE} />
@@ -615,13 +615,13 @@ function Formation({ c }: { c: string }) {
       {groups.map((g, idx) => (
         <g key={g.label} transform={`translate(294, ${60 + idx * 28})`}>
           <circle cx="3" cy="3" r="2.5" fill={c} />
-          <text x="10" y="5.5" fontSize="7.5" fill={INK} fontWeight="600" fontFamily="var(--font-mono)">
+          <text x="10" y="5.5" fontSize="9.5" fill={INK} fontWeight="600" fontFamily="var(--font-mono)">
             {g.label}
           </text>
-          <text x="72" y="5.5" fontSize="7" {...accentText(c)} textAnchor="end" fontFamily="var(--font-mono)">
+          <text x="72" y="5.5" fontSize="9" {...accentText(c)} textAnchor="end" fontFamily="var(--font-mono)">
             [{g.count}]
           </text>
-          <text x="10" y="15" fontSize="6" fill={MUTED} fontFamily="var(--font-mono)">
+          <text x="10" y="15" fontSize="7.5" fill={MUTED} fontFamily="var(--font-mono)">
             {g.names}
           </text>
         </g>
@@ -629,10 +629,10 @@ function Formation({ c }: { c: string }) {
 
       {/* Bottom Status / Match Type */}
       <rect x="290" y="174" width="78" height="30" rx="6" fill={`${c}1A`} stroke={c} strokeOpacity="0.35" />
-      <text x="329" y="186" textAnchor="middle" fontSize="6.5" fill={FAINT} fontFamily="var(--font-mono)">
+      <text x="329" y="186" textAnchor="middle" fontSize="8" fill={FAINT} fontFamily="var(--font-mono)">
         SQUAD GROUP
       </text>
-      <text x="329" y="197" textAnchor="middle" fontSize="7.5" {...accentText(c)} fontWeight="600" fontFamily="var(--font-mono)">
+      <text x="329" y="197" textAnchor="middle" fontSize="9.5" {...accentText(c)} fontWeight="600" fontFamily="var(--font-mono)">
         11 players
       </text>
     </g>
@@ -655,13 +655,14 @@ export default function ProjectVisual({
   const c = ACCENT[accent] ?? "#10B981";
 
   return (
-    <div className="relative flex h-full w-full min-h-[220px] items-center justify-center bg-transparent p-1 sm:p-2">
-      {/* Full diagram visible — meet + object-contain, no crop/mask/clip */}
+    <div className="relative flex h-full w-full min-h-[220px] items-center justify-start overflow-x-auto bg-transparent p-1 sm:p-2 [-webkit-overflow-scrolling:touch]">
+      {/* Full diagram visible — meet + object-contain, no crop/mask/clip.
+          min-w keeps the labels at a readable size on phones; the wrapper
+          lets the visitor pan the rest instead of shrinking it to ~5px. */}
       <svg
         viewBox="0 0 400 240"
         preserveAspectRatio="xMidYMid meet"
-        className="h-auto w-full max-h-[min(52vh,560px)] object-contain"
-        style={{ overflow: "visible" }}
+        className="h-auto w-full min-w-[460px] max-h-[min(52svh,560px)] object-contain"
         aria-hidden
       >
         <Backdrop c={c} />

@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Download, ExternalLink, FileText, X } from "lucide-react";
 import { profile, socials } from "../data/site";
@@ -19,8 +19,18 @@ const CORE = [
   "CI/CD",
 ];
 
+/** iOS (incl. iPadOS masquerading as macOS) cannot render PDFs in an iframe. */
+function canEmbedPdf() {
+  if (typeof navigator === "undefined") return true;
+  const ua = navigator.userAgent || "";
+  const iOS = /iP(hone|ad|od)/.test(ua);
+  const iPadOS = /Macintosh/.test(ua) && (navigator.maxTouchPoints || 0) > 1;
+  return !iOS && !iPadOS;
+}
+
 export default function ResumeModal() {
   const { open, setOpen } = useResume();
+  const embedPdf = useMemo(canEmbedPdf, []);
 
   useEffect(() => {
     setScrollLock(open);
@@ -36,7 +46,7 @@ export default function ResumeModal() {
   return (
     <AnimatePresence>
       {open && (
-        <div className="fixed inset-0 z-[88] flex items-center justify-center p-3 md:p-6">
+        <div className="fixed inset-0 z-[88] flex items-center justify-center px-3 pt-[calc(0.75rem+env(safe-area-inset-top,0px))] pb-[calc(0.75rem+env(safe-area-inset-bottom,0px))] md:px-6 md:py-6">
           {/* backdrop */}
           <motion.button
             type="button"
@@ -59,36 +69,37 @@ export default function ResumeModal() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 30, scale: 0.98 }}
             transition={{ duration: 0.55, ease: EASE }}
-            className="relative flex max-h-[92vh] w-full max-w-6xl flex-col overflow-hidden rounded-2xl border border-line bg-canvas shadow-[0_50px_140px_-60px_rgba(0,0,0,0.95)]"
+            className="tm-modal-panel relative flex w-full max-w-6xl flex-col overflow-hidden rounded-2xl border border-line bg-canvas shadow-[0_50px_140px_-60px_rgba(0,0,0,0.95)]"
           >
             {/* header */}
-            <div className="flex shrink-0 items-center justify-between gap-4 border-b border-line px-5 py-4">
-              <div className="flex items-center gap-3">
-                <span className="grid size-9 place-items-center rounded-lg border border-line bg-surface-2 font-mono text-[13px] font-semibold">
+            <div className="flex shrink-0 items-center justify-between gap-3 border-b border-line px-4 py-3.5 md:px-5 md:py-4">
+              <div className="flex min-w-0 items-center gap-3">
+                <span className="grid size-10 shrink-0 place-items-center rounded-lg border border-line bg-surface-2 font-mono text-[13px] font-semibold">
                   {profile.monogram}
                 </span>
-                <div>
-                  <p className="text-[14px] font-medium tracking-tight">
+                <div className="min-w-0">
+                  <p className="truncate text-[14px] font-medium tracking-tight">
                     {profile.name}
                     <span className="text-faint"> — </span>
                     <span className="text-muted">Resume</span>
                   </p>
-                  <p className="font-mono text-[10px] tracking-[0.14em] text-faint uppercase">
+                  <p className="hidden font-mono text-[11px] tracking-[0.14em] text-faint uppercase sm:block">
                     /resume.pdf · one page · updated 2026
                   </p>
                 </div>
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className="flex shrink-0 items-center gap-2">
                 <a
                   href={profile.resume}
                   target="_blank"
                   rel="noreferrer noopener"
                   data-cursor="open"
-                  className="hidden items-center gap-1.5 rounded-full border border-line bg-surface-2 px-3.5 py-2 text-[12px] font-medium transition-colors duration-300 hover:border-[var(--c-accent)] hover:text-[var(--c-accent)] sm:inline-flex"
+                  aria-label="Open resume in a new tab"
+                  className="grid size-11 place-items-center rounded-full border border-line bg-surface-2 transition-colors duration-300 hover:border-[var(--c-accent)] hover:text-[var(--c-accent)] sm:grid sm:size-auto sm:gap-1.5 sm:px-4 sm:py-2.5 sm:text-[12.5px] sm:font-medium"
                 >
-                  <ExternalLink className="size-3.5" />
-                  Open tab
+                  <ExternalLink className="size-4" />
+                  <span className="hidden sm:inline">Open tab</span>
                 </a>
                 <button
                   type="button"
@@ -96,15 +107,15 @@ export default function ResumeModal() {
                   aria-label="Close"
                   data-cursor="close"
                   autoFocus
-                  className="grid size-9 place-items-center rounded-full border border-line bg-surface-2 transition-colors duration-300 hover:border-[var(--c-accent)] hover:text-[var(--c-accent)]"
+                  className="grid size-11 place-items-center rounded-full border border-line bg-surface-2 transition-colors duration-300 hover:border-[var(--c-accent)] hover:text-[var(--c-accent)]"
                 >
-                  <X className="size-4" />
+                  <X className="size-4.5" />
                 </button>
               </div>
             </div>
 
             {/* body */}
-            <div className="grid min-h-0 flex-1 gap-5 overflow-y-auto p-5 lg:grid-cols-12 lg:overflow-hidden">
+            <div className="grid min-h-0 flex-1 gap-5 overflow-y-auto p-4 sm:p-5 lg:grid-cols-12 lg:overflow-hidden">
               {/* summary rail */}
               <aside className="flex flex-col gap-4 lg:col-span-4 lg:overflow-y-auto">
                 <div className="panel rounded-xl p-4">
@@ -112,12 +123,12 @@ export default function ResumeModal() {
                   <p className="mt-2.5 text-[14px] font-medium tracking-tight">
                     {profile.role}
                   </p>
-                  <p className="mt-2 text-[12.5px] leading-relaxed text-muted">
+                  <p className="mt-2 text-[13px] leading-relaxed text-muted">
                     Backend systems, cloud delivery and the tooling that keeps
                     both honest.
                   </p>
 
-                  <dl className="mt-4 space-y-2 border-t border-line pt-3 font-mono text-[11px]">
+                  <dl className="mt-4 space-y-2 border-t border-line pt-3 font-mono text-[11.5px]">
                     <div className="flex justify-between gap-3">
                       <dt className="text-faint">email</dt>
                       <dd className="truncate">{profile.email}</dd>
@@ -159,7 +170,7 @@ export default function ResumeModal() {
                         <p className="text-lg leading-none font-semibold tracking-tighter">
                           {s.v}
                         </p>
-                        <p className="mt-1.5 font-mono text-[9px] tracking-[0.14em] text-faint uppercase">
+                        <p className="mt-1.5 font-mono text-[11px] tracking-[0.1em] text-faint uppercase">
                           {s.k}
                         </p>
                       </div>
@@ -171,7 +182,7 @@ export default function ResumeModal() {
                   href={profile.resume}
                   download
                   data-cursor="open"
-                  className="group relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full px-5 py-3.5 text-sm font-medium"
+                  className="group relative inline-flex min-h-12 items-center justify-center gap-2 overflow-hidden rounded-full px-5 py-3.5 text-sm font-medium"
                   style={{ color: "var(--c-canvas)" }}
                 >
                   <span className="absolute inset-0 bg-gradient-to-r from-[var(--c-accent)] to-[var(--c-accent-2)] transition-transform duration-500 group-hover:scale-[1.05]" />
@@ -181,7 +192,7 @@ export default function ResumeModal() {
                   </span>
                 </a>
 
-                <div className="flex items-center gap-3 px-1 pb-1 font-mono text-[11px] text-faint">
+                <div className="flex items-center gap-4 px-1 pb-1 font-mono text-[11.5px] text-faint">
                   {socials.map((s) => (
                     <a
                       key={s.id}
@@ -189,7 +200,7 @@ export default function ResumeModal() {
                       target="_blank"
                       rel="noreferrer noopener"
                       data-cursor="open"
-                      className="transition-colors hover:text-[var(--c-accent)]"
+                      className="inline-flex min-h-11 items-center transition-colors hover:text-[var(--c-accent)]"
                     >
                       {s.label.toLowerCase()}
                     </a>
@@ -197,17 +208,62 @@ export default function ResumeModal() {
                 </div>
               </aside>
 
-              {/* pdf viewer */}
-              <div className="relative min-h-[420px] overflow-hidden rounded-xl border border-line bg-surface-2 lg:col-span-8">
-                <div className="absolute top-3 left-1/2 z-10 flex -translate-x-1/2 items-center gap-2 rounded-full border border-line bg-surface/90 px-3.5 py-1.5 font-mono text-[10px] tracking-[0.14em] text-faint uppercase backdrop-blur-md">
-                  <FileText className="size-3 text-[var(--c-accent)]" />
-                  preview
-                </div>
-                <iframe
-                  src={`${profile.resume}#toolbar=0&navpanes=0&view=FitH`}
-                  title="Tirth Makadia resume preview"
-                  className="h-full min-h-[420px] w-full border-0 bg-white"
-                />
+              {/* pdf viewer — iOS Safari can't paint a PDF inside an iframe,
+                  so it gets a direct-open panel instead of a blank frame. */}
+              <div className="relative min-h-[380px] overflow-hidden rounded-xl border border-line bg-surface-2 lg:col-span-8">
+                {embedPdf ? (
+                  <>
+                    <div className="absolute top-3 left-1/2 z-10 flex -translate-x-1/2 items-center gap-2 rounded-full border border-line bg-surface/90 px-3.5 py-1.5 font-mono text-[11px] tracking-[0.14em] text-faint uppercase backdrop-blur-md">
+                      <FileText className="size-3.5 text-[var(--c-accent)]" />
+                      preview
+                    </div>
+                    <iframe
+                      src={`${profile.resume}#toolbar=0&navpanes=0&view=FitH`}
+                      title="Tirth Makadia resume preview"
+                      className="h-full min-h-[380px] w-full border-0 bg-white"
+                    />
+                  </>
+                ) : (
+                  <div className="flex h-full min-h-[380px] flex-col items-center justify-center gap-5 p-7 text-center">
+                    <span className="grid size-16 place-items-center rounded-2xl border border-line bg-surface">
+                      <FileText
+                        className="size-8 text-[var(--c-accent)]"
+                        aria-hidden
+                      />
+                    </span>
+                    <div>
+                      <p className="text-[15px] font-semibold tracking-tight">
+                        One-page resume
+                      </p>
+                      <p className="mx-auto mt-2 max-w-[19rem] text-[13.5px] leading-relaxed text-muted">
+                        This browser opens PDFs in its own viewer — tap below to
+                        read, save or share the resume.
+                      </p>
+                    </div>
+                    <div className="flex w-full max-w-xs flex-col gap-2.5">
+                      <a
+                        href={profile.resume}
+                        target="_blank"
+                        rel="noreferrer noopener"
+                        data-cursor="open"
+                        className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[var(--c-accent)] to-[var(--c-accent-2)] px-6 py-3.5 text-sm font-medium"
+                        style={{ color: "var(--c-canvas)" }}
+                      >
+                        <ExternalLink className="size-4" />
+                        Open resume
+                      </a>
+                      <a
+                        href={profile.resume}
+                        download
+                        data-cursor="open"
+                        className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-line bg-surface px-6 py-3.5 text-sm font-medium transition-colors hover:border-[var(--c-accent)] hover:text-[var(--c-accent)]"
+                      >
+                        <Download className="size-4" />
+                        Download PDF
+                      </a>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </motion.div>

@@ -48,6 +48,8 @@ function FeaturedProjectSlide({
     <article
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
+      onPointerDown={onMouseEnter}
+      onPointerLeave={onMouseLeave}
       className="relative w-full min-h-[34rem] rounded-2xl border bg-surface p-5 sm:min-h-[36rem] sm:p-7 md:rounded-3xl md:p-9 lg:min-h-[40rem] lg:p-10"
       style={{
         borderColor: `${t.cardBorder}99`,
@@ -108,7 +110,7 @@ function FeaturedProjectSlide({
                     onClick={() => setPicked(null)}
                     aria-pressed={picked === null}
                     data-cursor="link"
-                    className={`rounded-full border px-2.5 py-1 font-mono text-[10px] font-semibold tracking-[0.14em] uppercase transition-all duration-200 ${
+                    className={`min-h-10 rounded-full border px-3 py-2 font-mono text-[11px] font-semibold tracking-[0.14em] uppercase transition-all duration-200 ${
                       picked === null
                         ? "accent-tint accent-text"
                         : "border-line bg-surface-2 text-muted hover:text-ink"
@@ -125,7 +127,7 @@ function FeaturedProjectSlide({
                         onClick={() => setPicked(active ? null : d.label)}
                         aria-pressed={active}
                         data-cursor="link"
-                        className={`rounded-full border px-2.5 py-1 font-mono text-[10px] font-semibold tracking-[0.14em] uppercase transition-all duration-200 ${
+                        className={`min-h-10 rounded-full border px-3 py-2 font-mono text-[11px] font-semibold tracking-[0.14em] uppercase transition-all duration-200 ${
                           active
                             ? "accent-tint accent-text"
                             : "border-line bg-surface-2 text-muted hover:text-ink"
@@ -183,7 +185,7 @@ function FeaturedProjectSlide({
                 borderColor: `${t.cardBorder}88`,
               }}
             >
-              <p className="font-mono text-[10px] font-semibold tracking-[0.2em] text-faint uppercase">
+              <p className="font-mono text-[11px] font-semibold tracking-[0.2em] text-faint uppercase">
                 Architecture pipeline
               </p>
               <p
@@ -195,7 +197,7 @@ function FeaturedProjectSlide({
             </div>
 
             <div className="mt-6">
-              <p className="font-mono text-[10px] font-semibold tracking-[0.2em] text-faint uppercase">
+              <p className="font-mono text-[11px] font-semibold tracking-[0.2em] text-faint uppercase">
                 Key engineering highlights
               </p>
               <ul className="mt-3 grid grid-cols-1 gap-2.5 sm:grid-cols-2">
@@ -278,24 +280,8 @@ function FeaturedProjectSlide({
                   target="_blank"
                   rel="noreferrer noopener"
                   data-cursor="open"
-                  className="accent-text inline-flex items-center justify-center gap-2 rounded-full border px-5 py-3 text-[13px] font-semibold transition-all duration-200 hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-                  style={
-                    {
-                      "--accent-text": "#38BDF8",
-                      backgroundColor: "rgba(36, 150, 237, 0.12)",
-                      borderColor: "rgba(36, 150, 237, 0.45)",
-                    } as CSSProperties
-                  }
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = "rgba(36, 150, 237, 0.24)";
-                    e.currentTarget.style.borderColor = "#2496ED";
-                    e.currentTarget.style.boxShadow = "0 0 24px -6px rgba(36, 150, 237, 0.6)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = "rgba(36, 150, 237, 0.12)";
-                    e.currentTarget.style.borderColor = "rgba(36, 150, 237, 0.45)";
-                    e.currentTarget.style.boxShadow = "none";
-                  }}
+                  className="accent-text inline-flex items-center justify-center gap-2 rounded-full border border-[rgba(36,150,237,0.45)] bg-[rgba(36,150,237,0.12)] px-5 py-3 text-[13px] font-semibold transition-all duration-200 hover:-translate-y-0.5 hover:border-[#2496ED] hover:bg-[rgba(36,150,237,0.24)] hover:shadow-[0_0_24px_-6px_rgba(36,150,237,0.6)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                  style={{ "--accent-text": "#38BDF8" } as CSSProperties}
                 >
                   Explore System
                   <ArrowUpRight className="size-4" />
@@ -436,7 +422,7 @@ export default function Projects() {
                   type="button"
                   onClick={() => goTo(idx)}
                   data-cursor="link"
-                  className={`flex items-center gap-2 rounded-full border px-4 py-2 font-mono text-[11px] font-semibold tracking-wider uppercase transition-all duration-200 sm:text-[11.5px] ${
+                  className={`flex min-h-11 items-center gap-2 rounded-full border px-4 py-2.5 font-mono text-[11px] font-semibold tracking-wider uppercase transition-all duration-200 sm:text-[11.5px] ${
                     isActive
                       ? "border-[#2496ED]/60 bg-[#2496ED]/15 text-[#0369a1] shadow-[0_0_18px_rgba(36,150,237,0.25)] dark:text-[#38BDF8]"
                       : "border-line bg-surface-2 text-muted hover:border-[var(--c-line-strong)] hover:text-ink"
@@ -535,14 +521,18 @@ export default function Projects() {
                 aria-label={`Show project ${p.index}: ${p.title}`}
                 onClick={() => goTo(idx)}
                 data-cursor="link"
-                className="h-2 rounded-full transition-all duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--c-accent)]"
-                style={{
-                  width: isActive ? 28 : 8,
-                  backgroundColor: isActive
-                    ? "#38BDF8"
-                    : "color-mix(in srgb, var(--c-ink) 25%, transparent)",
-                }}
-              />
+                className="grid size-10 place-items-center rounded-full transition-all duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--c-accent)] active:scale-95"
+              >
+                <span
+                  className="block h-2 rounded-full transition-all duration-300"
+                  style={{
+                    width: isActive ? 28 : 8,
+                    backgroundColor: isActive
+                      ? "#38BDF8"
+                      : "color-mix(in srgb, var(--c-ink) 25%, transparent)",
+                  }}
+                />
+              </button>
             );
           })}
         </div>

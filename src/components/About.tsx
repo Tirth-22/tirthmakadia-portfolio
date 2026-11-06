@@ -52,7 +52,7 @@ export default function About() {
                       i < aboutFacts.length - 1 ? "border-b border-line" : ""
                     }`}
                   >
-                    <dt className="font-mono text-[10.5px] tracking-[0.16em] text-faint uppercase">
+                    <dt className="font-mono text-[11px] tracking-[0.16em] text-faint uppercase">
                       {f.k}
                     </dt>
                     <dd className="text-right text-[13px] font-medium tracking-tight">

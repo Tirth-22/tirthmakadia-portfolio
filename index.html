@@ -2,8 +2,24 @@
 <html lang="en" class="dark">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!--
+      viewport-fit=cover lets the layout use the full screen on notched iOS
+      devices (paired with env(safe-area-inset-*) in CSS).
+      interactive-widget=resizes-content keeps the on-screen keyboard from
+      covering the contact form on Android.
+    -->
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content"
+    />
     <meta name="theme-color" content="#08090E" />
+    <!-- Stop iOS/Android auto-linking phone numbers, dates and addresses. -->
+    <meta name="format-detection" content="telephone=no,date=no,address=no,email=no" />
+    <!-- Installable as a home-screen web app (Android Chrome + iOS Safari). -->
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Tirth Makadia" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta
       name="description"
@@ -28,6 +44,153 @@
         } catch (e) {
           document.documentElement.classList.add("dark");
         }
+      })();
+    </script>
+
+    <script>
+      /* ------------------------------------------------------------------
+         "Desktop site" on a phone — detection + recovery.
+
+         When a phone browser is asked for the desktop site, the viewport
+         meta tag is ignored: the layout viewport jumps to ~980 CSS px and
+         the whole page is painted at roughly 40% scale (unreadable text,
+         thumbnail-sized tap targets).
+
+         Recovery, applied before first paint:
+           1. scale the root (CSS `zoom`) so the logical layout width equals
+              the phone's real screen width — content then renders at 1:1
+              physical scale instead of being shrunk to fit;
+           2. neutralise every `@media (min-width: …)` rule so only the
+              mobile-first styles apply at that logical width (the exact
+              design real phones get).
+
+         If anything fails, the class is simply absent and the site renders
+         exactly as the browser asked — a safe degradation.
+      ------------------------------------------------------------------ */
+      (function () {
+        var doc = document.documentElement;
+        var active = false;
+        var patched = false;
+
+        function physWidth() {
+          var s = window.screen;
+          return s && s.width ? s.width : 0;
+        }
+
+        function isDesktopMode() {
+          try {
+            if ((navigator.maxTouchPoints || 0) <= 0) return false;
+            var phys = physWidth();
+            var w = window.innerWidth;
+            return phys > 0 && w > 640 && w > phys * 1.12;
+          } catch (e) {
+            return false;
+          }
+        }
+
+        function scale() {
+          var z = window.innerWidth / physWidth();
+          return z > 1.05 && z < 6 ? Math.round(z * 1000) / 1000 : 0;
+        }
+
+        /* ---- strip responsive (min-width) stylesheets ---- */
+        function patchCss(css) {
+          return css.replace(
+            /@media\s*\(\s*min-width\s*:[^)]*\)/g,
+            "@media (min-width:99999px)",
+          );
+        }
+
+        function neutralize() {
+          if (!active || patched) return;
+          patched = true;
+
+          var styles = document.querySelectorAll("style");
+          for (var i = 0; i < styles.length; i++) {
+            var el = styles[i];
+            if (el.getAttribute("data-tm") === "1") continue;
+            var text = el.textContent || "";
+            if (text.indexOf("min-width") !== -1) {
+              el.textContent = patchCss(text);
+              el.setAttribute("data-tm", "1");
+            }
+          }
+
+          var links = document.querySelectorAll('link[rel="stylesheet"]');
+          for (var j = 0; j < links.length; j++) {
+            (function (link) {
+              if (link.getAttribute("data-tm") === "1") return;
+              var href = link.href;
+              // Only same-origin bundles can be patched (skip Google Fonts).
+              if (!href || href.indexOf(location.origin) !== 0) return;
+              link.setAttribute("data-tm", "1");
+              fetch(href)
+                .then(function (r) {
+                  return r.ok ? r.text() : null;
+                })
+                .then(function (css) {
+                  if (!css) return;
+                  var style = document.createElement("style");
+                  style.setAttribute("data-tm", "1");
+                  style.textContent = patchCss(css);
+                  document.head.appendChild(style);
+                  if (link.parentNode) link.parentNode.removeChild(link);
+                })
+                .catch(function () {
+                  /* keep the original stylesheet */
+                });
+            })(links[j]);
+          }
+
+          // Dev server injects <style> tags over time — catch late arrivals.
+          if (window.MutationObserver) {
+            var mo = new MutationObserver(function () {
+              if (active) {
+                patched = false;
+                neutralize();
+              }
+            });
+            mo.observe(doc, { childList: true, subtree: true });
+            window.setTimeout(function () {
+              mo.disconnect();
+            }, 15000);
+          }
+        }
+
+        function apply() {
+          var z = scale();
+          if (!z) return;
+          active = true;
+          patched = false;
+          doc.classList.add("tm-deskmode");
+          doc.style.zoom = String(z);
+          neutralize();
+        }
+
+        function clear() {
+          if (!active) return;
+          active = false;
+          doc.classList.remove("tm-deskmode");
+          doc.style.zoom = "";
+        }
+
+        if (isDesktopMode()) apply();
+
+        // Orientation changes / toggling the browser setting back and forth.
+        var timer = 0;
+        window.addEventListener("resize", function () {
+          window.clearTimeout(timer);
+          timer = window.setTimeout(function () {
+            if (!active) {
+              if (isDesktopMode()) apply();
+            } else if (!isDesktopMode()) {
+              clear();
+            } else {
+              var z = scale();
+              if (z) doc.style.zoom = String(z);
+            }
+          }, 200);
+        });
       })();
     </script>
   </head>

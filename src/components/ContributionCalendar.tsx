@@ -93,6 +93,12 @@ export default function ContributionCalendar({ days, total }: Props) {
     x: number;
     y: number;
   } | null>(null);
+  const [pinned, setPinned] = useState<{
+    day: Cell;
+    x: number;
+    y: number;
+  } | null>(null);
+  const active = pinned ?? hover;
 
   /* edge fades — hint that the calendar can be swiped on narrow screens */
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -137,6 +143,19 @@ export default function ContributionCalendar({ days, total }: Props) {
     setHover({ day, x: e.clientX - r.left, y: e.clientY - r.top });
   };
 
+  /* tap-to-pin — a tapped day keeps its tooltip until tapped again */
+  const onPin = (day: Cell, e: React.MouseEvent<SVGRectElement>) => {
+    e.stopPropagation();
+    const wrap = wrapRef.current;
+    if (!wrap) return;
+    const r = wrap.getBoundingClientRect();
+    const pos = { day, x: e.clientX - r.left, y: e.clientY - r.top };
+    const same = pinned?.day.date === day.date;
+    // touch taps fire a synthetic mouseenter — clear it so dismissing really hides
+    setHover(null);
+    setPinned(same ? null : pos);
+  };
+
   const fmt = (iso: string) =>
     new Date(parseUTC(iso)).toLocaleDateString("en-GB", {
       weekday: "short",
@@ -146,7 +165,7 @@ export default function ContributionCalendar({ days, total }: Props) {
     });
 
   return (
-    <div ref={wrapRef} className="relative">
+    <div ref={wrapRef} className="relative" onClick={() => setPinned(null)}>
       <div className="relative">
         <div ref={scrollRef} className="overflow-x-auto pb-1">
         <svg
@@ -206,6 +225,7 @@ export default function ContributionCalendar({ days, total }: Props) {
                 }}
                 onMouseEnter={(e) => onEnter(c, e)}
                 onMouseLeave={() => setHover(null)}
+                onClick={(e) => onPin(c, e)}
               />
             );
           })}
@@ -228,11 +248,11 @@ export default function ContributionCalendar({ days, total }: Props) {
       </div>
 
       {/* GitHub standard legend */}
-      <div className="mt-3 flex items-center justify-between gap-4 border-t border-line pt-3">
-        <span className="font-mono text-[10px] tracking-[0.14em] text-muted">
+      <div className="mt-3 flex flex-wrap items-center justify-between gap-4 gap-y-2 border-t border-line pt-3">
+        <span className="font-mono text-[11px] tracking-[0.14em] text-muted">
           {total.toLocaleString("en-US")} contributions in the last year
         </span>
-        <div className="flex items-center gap-1.5 font-mono text-[10px] text-muted">
+        <div className="flex items-center gap-1.5 font-mono text-[11px] text-muted">
           <span>Less</span>
           {GH_LEVEL_COLORS.map((color, i) => (
             <span
@@ -249,19 +269,19 @@ export default function ContributionCalendar({ days, total }: Props) {
       </div>
 
       {/* tooltip */}
-      {hover && (
+      {active && (
         <div
           className="pointer-events-none absolute z-20 -translate-x-1/2 -translate-y-[calc(100%+10px)] rounded-md border border-line bg-surface px-3 py-1.5 shadow-xl text-center"
           style={{
-            left: Math.min(Math.max(hover.x, 70), (wrapRef.current?.clientWidth ?? 300) - 70),
-            top: hover.y,
+            left: Math.min(Math.max(active.x, 70), (wrapRef.current?.clientWidth ?? 300) - 70),
+            top: active.y,
           }}
         >
           <p className="font-mono text-[11px] font-medium text-ink whitespace-nowrap">
-            {hover.day.count} contribution{hover.day.count === 1 ? "" : "s"}
+            {active.day.count} contribution{active.day.count === 1 ? "" : "s"}
           </p>
-          <p className="mt-0.5 font-mono text-[9.5px] whitespace-nowrap text-muted">
-            {fmt(hover.day.date)}
+          <p className="mt-0.5 font-mono text-[11px] whitespace-nowrap text-muted">
+            {fmt(active.day.date)}
           </p>
         </div>
       )}

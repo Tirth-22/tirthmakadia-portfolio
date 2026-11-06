@@ -118,6 +118,13 @@
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
     scroll-behavior: auto;
+    /* iOS Safari: never let the page re-render text larger after rotate. */
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    /* Stop the rubber-band chaining into the body background. */
+    overscroll-behavior: none;
+    /* Belt-and-braces: no sideways panning from stray absolute children. */
+    overflow-x: hidden;
   }
 
   body {
@@ -126,7 +133,28 @@
     font-family: var(--font-sans);
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
     overflow-x: hidden;
+    overscroll-behavior-y: none;
     transition: background-color 0.6s ease, color 0.4s ease;
+    /* A long email / URL must wrap instead of widening the document. */
+    overflow-wrap: break-word;
+  }
+
+  /* Never let embedded media push the layout sideways. */
+  img,
+  video,
+  canvas,
+  iframe,
+  svg {
+    max-width: 100%;
+  }
+
+  /* iOS zooms any input set below 16px — keep form controls legible. */
+  input,
+  textarea,
+  select,
+  button {
+    font: inherit;
+    font-size: inherit;
   }
 
   h1,
@@ -313,18 +341,22 @@
     border: 1px solid var(--c-line);
     background: color-mix(in srgb, var(--c-surface-2) 80%, transparent);
     border-radius: 999px;
-    padding: 0.3rem 0.7rem;
+    padding: 0.35rem 0.75rem;
     font-family: var(--font-mono);
-    font-size: 0.7rem;
+    font-size: 0.72rem;
     letter-spacing: 0.04em;
     color: var(--c-muted);
     transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
   }
-  .chip:hover {
-    color: var(--c-ink);
-    border-color: rgba(16, 185, 129, 0.35);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 18px -12px var(--c-accent);
+  /* Hover-only motion is wrapped so touch devices don't get a chip that is
+     permanently "lifted" by iOS's sticky first-tap hover. */
+  @media (hover: hover) {
+    .chip:hover {
+      color: var(--c-ink);
+      border-color: rgba(16, 185, 129, 0.35);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px -12px var(--c-accent);
+    }
   }
 
   /* Micro-tags (e.g. Java 21, AWS, Spring Boot) — emerald accent */
@@ -350,8 +382,8 @@
 
   .label-mono {
     font-family: var(--font-mono);
-    font-size: 0.68rem;
-    letter-spacing: 0.22em;
+    font-size: 0.72rem;
+    letter-spacing: 0.2em;
     text-transform: uppercase;
     color: var(--c-faint);
   }
@@ -427,7 +459,14 @@
     transition: opacity 0.45s ease;
     pointer-events: none;
   }
-  .holo-border:hover::before,
+  /* Touch devices never get the pointer-tracked glow (--mx/--my are only
+     written by mouse events), so the reveal is hover-capable only; the
+     focus-within branch stays for keyboard users everywhere. */
+  @media (hover: hover) {
+    .holo-border:hover::before {
+      opacity: 1;
+    }
+  }
   .holo-border:focus-within::before {
     opacity: 1;
   }
@@ -509,6 +548,16 @@
     font-family: var(--font-mono);
     font-size: 0.78rem;
     line-height: 1.75;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Modal panel: viewport-height fallback first, then the small viewport
+     unit so iOS Safari's collapsing toolbar can't push the bottom of the
+     dialog under the browser chrome. */
+  .tm-modal-panel {
+    max-height: 92vh;
+    max-height: 92svh;
   }
 }
 

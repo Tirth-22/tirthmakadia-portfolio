@@ -5,7 +5,6 @@ import { profile, socials } from "../data/site";
 import { scrollToId } from "../lib/scroll";
 import { EASE } from "../lib/motion";
 import { useIntro } from "../lib/intro";
-import { useResume } from "../lib/ui";
 import Magnetic from "./Magnetic";
 import ProfileCard from "./ProfileCard";
 import {
@@ -48,7 +47,6 @@ const wordChild = {
 
 export default function Hero() {
   const ref = useRef<HTMLElement>(null);
-  const { setOpen: setResumeOpen } = useResume();
   const { ready } = useIntro();
 
   const { scrollYProgress } = useScroll({
@@ -76,7 +74,12 @@ export default function Hero() {
             className="mb-7 inline-flex items-center gap-2.5 rounded-full border border-line bg-surface px-4 py-2"
           >
             <span className="status-dot" />
-            <span className="font-mono text-[10.5px] tracking-[0.14em] text-muted uppercase md:text-[11px]">
+            {/* The full badge is wide — a short variant keeps the pill on one
+                line on phones instead of wrapping to two. */}
+            <span className="font-mono text-[11px] tracking-[0.06em] text-muted uppercase sm:hidden">
+              Java Backend · Cloud &amp; DevOps
+            </span>
+            <span className="hidden font-mono text-[11px] tracking-[0.14em] text-muted uppercase sm:inline">
               {profile.badge}
             </span>
           </motion.div>
@@ -143,15 +146,17 @@ export default function Hero() {
             </Magnetic>
 
             <Magnetic strength={0.22}>
-              <button
-                type="button"
-                onClick={() => setResumeOpen(true)}
+              <a
+                href={profile.resume}
+                target="_blank"
+                rel="noreferrer noopener"
                 data-cursor="open"
+                aria-label="Open resume in a new tab"
                 className="group inline-flex items-center gap-2.5 rounded-full border border-line bg-surface px-6 py-3.5 text-sm font-medium transition-all duration-300 hover:border-[var(--c-accent)] hover:text-[var(--c-accent)] hover:shadow-[0_0_34px_-16px_var(--c-accent)]"
               >
                 <Download className="size-4 transition-transform duration-300 group-hover:translate-y-0.5" />
                 View Resume
-              </button>
+              </a>
             </Magnetic>
           </motion.div>
 
@@ -178,7 +183,7 @@ export default function Hero() {
                   </span>
                   <span className="flex flex-col leading-none">
                     <span className="text-[12.5px] font-medium">{s.label}</span>
-                    <span className="mt-1 font-mono text-[9.5px] text-faint">
+                    <span className="mt-1 font-mono text-[11px] text-faint">
                       {s.handle}
                     </span>
                   </span>
@@ -208,7 +213,7 @@ export default function Hero() {
         style={{ opacity: fade }}
         className="absolute bottom-7 left-1/2 hidden -translate-x-1/2 flex-col items-center gap-2.5 md:flex"
       >
-        <span className="font-mono text-[9.5px] tracking-[0.3em] text-faint uppercase">
+        <span className="font-mono text-[11px] tracking-[0.3em] text-faint uppercase">
           scroll
         </span>
         <span className="relative h-12 w-px overflow-hidden bg-[var(--c-line-strong)]">
