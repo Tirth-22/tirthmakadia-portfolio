@@ -121,12 +121,9 @@
     /* iOS Safari: never let the page re-render text larger after rotate. */
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
-    /* Stop the rubber-band chaining into the body background. */
-    overscroll-behavior: none;
-    /* Belt-and-braces: no sideways panning from stray absolute children. */
-    overflow-x: hidden;
+    overflow-x: clip;
     overflow-y: auto;
-    touch-action: pan-y;
+    min-height: 100%;
   }
 
   body {
@@ -134,17 +131,18 @@
     color: var(--c-ink);
     font-family: var(--font-sans);
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
-    overflow-x: hidden;
+    overflow-x: clip;
     overflow-y: auto;
-    touch-action: pan-y;
-    overscroll-behavior-y: none;
+    min-height: 100%;
     transition: background-color 0.6s ease, color 0.4s ease;
     /* A long email / URL must wrap instead of widening the document. */
     overflow-wrap: break-word;
   }
 
   #root {
-    min-height: 100%;
+    min-height: 100vh;
+    min-height: 100dvh;
+    overflow: visible;
   }
 
   /* Never let embedded media push the layout sideways. */
