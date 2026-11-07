@@ -58,8 +58,6 @@ const pageZoom = () => {
 };
 
 export function setScrollLock(locked: boolean, key = "default") {
-  window.dispatchEvent(new CustomEvent("tm-modal", { detail: locked }));
-
   const body = document.body;
   const html = document.documentElement;
   if (!body || !html) return;
@@ -69,6 +67,7 @@ export function setScrollLock(locked: boolean, key = "default") {
     const wasUnlocked = scrollLocks.size === 0;
     scrollLocks.add(key);
     if (!wasUnlocked) return;
+    window.dispatchEvent(new CustomEvent("tm-modal", { detail: true }));
     savedScrollY = window.scrollY || window.pageYOffset || 0;
     body.style.overflow = "hidden";
     html.style.overflow = "hidden";
@@ -82,6 +81,7 @@ export function setScrollLock(locked: boolean, key = "default") {
     }
   } else {
     if (!scrollLocks.delete(key) || scrollLocks.size > 0) return;
+    window.dispatchEvent(new CustomEvent("tm-modal", { detail: false }));
     body.style.overflow = "";
     html.style.overflow = "";
     if (body.style.position === "fixed") {

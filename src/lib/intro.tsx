@@ -32,7 +32,10 @@ type IntroCtx = {
 const IntroContext = createContext<IntroCtx | null>(null);
 
 export function IntroProvider({ children }: { children: ReactNode }) {
-  const [phase, setPhase] = useState<Phase>("intro");
+  const [phase, setPhase] = useState<Phase>(() => {
+    if (typeof window === "undefined") return "intro";
+    return window.matchMedia("(pointer: coarse)").matches ? "done" : "intro";
+  });
 
   const reveal = useCallback(() => {
     try {
