@@ -40,7 +40,14 @@ export default function AwsIconField() {
     if (!ctx) return;
 
     const reduced = prefersReduced();
-    const mobile = window.innerWidth < 768;
+    // Logical (layout) viewport: under CSS `zoom` (desktop-site recovery)
+    // innerWidth is the *zoomed* viewport — divide it out so the breakpoint
+    // and the canvas box match the CSS layout, not the physical viewport.
+    const logicalWidth = () => {
+      const z = parseFloat(getComputedStyle(document.documentElement).zoom);
+      return window.innerWidth / (Number.isFinite(z) && z > 0 ? z : 1);
+    };
+    const mobile = logicalWidth() < 768;
     const count = mobile ? COUNT_MOBILE : COUNT_DESKTOP;
 
     /* ---- load glyphs as images ---------------------------------- */
@@ -62,8 +69,10 @@ export default function AwsIconField() {
     let dpr = 1;
     const resize = () => {
       dpr = Math.min(window.devicePixelRatio || 1, 2);
-      w = window.innerWidth;
-      h = window.innerHeight;
+      const z = parseFloat(getComputedStyle(document.documentElement).zoom);
+      const zoom = Number.isFinite(z) && z > 0 ? z : 1;
+      w = window.innerWidth / zoom;
+      h = window.innerHeight / zoom;
       canvas.width = Math.floor(w * dpr);
       canvas.height = Math.floor(h * dpr);
       canvas.style.width = `${w}px`;

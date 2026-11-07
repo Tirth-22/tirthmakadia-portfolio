@@ -93,12 +93,39 @@
           return z > 1.05 && z < 6 ? Math.round(z * 1000) / 1000 : 0;
         }
 
-        /* ---- strip responsive (min-width) stylesheets ---- */
+        /* ---- strip responsive (min-width) stylesheets + fix viewport units ----
+           Under CSS `zoom`, viewport units (vw/vh/svh/dvh/vmin/vmax) still
+           resolve against the *un-zoomed* layout viewport (the ~980px one),
+           so `100svh` would render 2.49 screens tall on a phone. Wrapping
+           every viewport length in `calc(<n><unit> * var(--tm-vuc))` and
+           setting `--tm-vuc = 1 / zoom` on <html> scales them back to the
+           logical (phone-width) viewport.
+
+           Tailwind also echoes arbitrary values into *selectors*
+           (`.h-\[55vw\]`, `…4\.7vw…`) with backslash escapes. Rewriting
+           those would produce an invalid selector and Chrome would discard
+           the entire rule — so any match touching a backslash is left
+           alone, and only declaration values are rewritten. */
+        var VU_RE =
+          /(\d*\.?\d+)(vmin|vmax|svh|lvh|dvh|svw|lvw|dvw|vw|vh)(?!\s*\*\s*var\(--tm-vuc)/g;
+
         function patchCss(css) {
-          return css.replace(
-            /@media\s*\(\s*min-width\s*:[^)]*\)/g,
-            "@media (min-width:99999px)",
-          );
+          return css
+            .replace(
+              /@media\s*\(\s*min-width\s*:[^)]*\)/g,
+              "@media (min-width:99999px)",
+            )
+            .replace(VU_RE, function (m, num, unit, offset, whole) {
+              var prev = offset > 0 ? whole.charAt(offset - 1) : "";
+              var next = whole.charAt(offset + m.length);
+              if (prev === "\\" || next === "\\") return m; // escaped selector
+              return "calc(" + m + " * var(--tm-vuc, 1))";
+            });
+        }
+
+        function setVuc(z) {
+          if (z) doc.style.setProperty("--tm-vuc", String(Math.round((1 / z) * 10000) / 10000));
+          else doc.style.removeProperty("--tm-vuc");
         }
 
         function neutralize() {
@@ -164,6 +191,7 @@
           patched = false;
           doc.classList.add("tm-deskmode");
           doc.style.zoom = String(z);
+          setVuc(z);
           neutralize();
         }
 
@@ -172,6 +200,7 @@
           active = false;
           doc.classList.remove("tm-deskmode");
           doc.style.zoom = "";
+          setVuc(0);
         }
 
         if (isDesktopMode()) apply();
@@ -187,7 +216,10 @@
               clear();
             } else {
               var z = scale();
-              if (z) doc.style.zoom = String(z);
+              if (z) {
+                doc.style.zoom = String(z);
+                setVuc(z);
+              }
             }
           }, 200);
         });

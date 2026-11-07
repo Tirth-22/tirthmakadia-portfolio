@@ -95,7 +95,7 @@ for (const id of sections) {
 // full page (dark)
 await page.screenshot({ path: `${OUT}/full-dark.png`, fullPage: true });
 
-// --- marquee: verify auto-scroll + prev/next controls ---
+// --- project carousel: verify auto-advance + prev/next controls ---
 await page.evaluate(() => {
   const el = document.getElementById("projects");
   if (!el) return;
@@ -104,23 +104,23 @@ await page.evaluate(() => {
 });
 await new Promise((r) => setTimeout(r, 900));
 
-const trackX = () =>
+const slideIdx = () =>
   page.evaluate(() => {
-    const item = document.querySelector("[data-item]");
-    return item ? Math.round(item.getBoundingClientRect().x) : null;
+    const c = document.querySelector('#projects p[aria-live="polite"]');
+    return c ? c.textContent.replace(/\s+/g, " ").trim() : null;
   });
 
-const x1 = await trackX();
-await new Promise((r) => setTimeout(r, 1100));
-const x2 = await trackX();
-console.log(`marquee auto-scroll: x ${x1} → ${x2} (Δ ${x2 - x1})`);
+const i1 = await slideIdx();
+await new Promise((r) => setTimeout(r, 6500)); // > AUTOPLAY_MS (5500)
+const i2 = await slideIdx();
+console.log(`carousel auto-advance: ${i1} → ${i2}`);
 
 await page.evaluate(() => {
   document.querySelector('button[aria-label="Next project"]')?.click();
 });
 await new Promise((r) => setTimeout(r, 900));
-const x3 = await trackX();
-console.log(`marquee next step: x ${x2} → ${x3} (Δ ${x3 - x2})`);
+const i3 = await slideIdx();
+console.log(`carousel next step:    ${i2} → ${i3}`);
 await page.screenshot({ path: `${OUT}/projects-next.png` });
 
 // light theme
@@ -143,21 +143,31 @@ await page.evaluate(() => {
 await new Promise((r) => setTimeout(r, 1500));
 await page.screenshot({ path: `${OUT}/metrics-light.png` });
 
-// resume modal
-await page.evaluate(() => window.scrollTo({ top: 0, behavior: "instant" }));
-await new Promise((r) => setTimeout(r, 700));
+// resume modal — opened from the Experience section (Hero/Header links now
+// open the PDF directly in a new tab instead of a modal).
+await page.evaluate(() => {
+  const el = document.getElementById("experience");
+  if (!el) return;
+  const top = el.getBoundingClientRect().top + window.scrollY;
+  window.scrollTo({ top: Math.max(0, top - 60), behavior: "instant" });
+});
+await new Promise((r) => setTimeout(r, 1000));
 await page.evaluate(() => {
   const btns = [...document.querySelectorAll("button")];
-  btns.find((b) => b.textContent?.trim() === "Resume")?.click();
+  btns.find((b) => /open full resume/i.test(b.textContent || ""))?.click();
 });
 await new Promise((r) => setTimeout(r, 1600));
 await page.screenshot({ path: `${OUT}/resume-modal.png` });
 
-// mobile
+// mobile (its own tab → sessionStorage intro replays, so wait for the hero
+// instead of a fixed sleep that races the loader)
 const mobile = await browser.newPage();
 await mobile.setViewport({ width: 390, height: 844, deviceScaleFactor: 2 });
 await mobile.goto(URL, { waitUntil: "domcontentloaded", timeout: 60000 });
-await new Promise((r) => setTimeout(r, 3600));
+await mobile
+  .waitForSelector("#top h1", { timeout: 20000, visible: true })
+  .catch(() => {});
+await new Promise((r) => setTimeout(r, 1800)); // stagger settle
 await mobile.screenshot({ path: `${OUT}/mobile-hero.png` });
 await mobile.evaluate(() => {
   const el = document.getElementById("projects");

@@ -45,6 +45,18 @@ const isCoarsePointer = () =>
   typeof window.matchMedia === "function" &&
   window.matchMedia("(pointer: coarse)").matches;
 
+/**
+ * CSS `zoom` applied to <html> (desktop-site-on-phone recovery).
+ * `window.scrollY` is reported in *zoomed* viewport pixels, while
+ * `body.style.top` is laid out in *logical* pixels — so the pin offset
+ * must be divided by the current zoom or the page jumps on lock.
+ */
+const pageZoom = () => {
+  if (typeof window.getComputedStyle !== "function") return 1;
+  const z = parseFloat(getComputedStyle(document.documentElement).zoom);
+  return Number.isFinite(z) && z > 0 ? z : 1;
+};
+
 export function setScrollLock(locked: boolean) {
   window.dispatchEvent(new CustomEvent("tm-modal", { detail: locked }));
 
@@ -60,7 +72,8 @@ export function setScrollLock(locked: boolean) {
     html.style.overflow = "hidden";
     if (isCoarsePointer()) {
       body.style.position = "fixed";
-      body.style.top = `-${savedScrollY}px`;
+      // scrollY is in zoomed viewport px; body.top is laid out in logical px.
+      body.style.top = `-${savedScrollY / pageZoom()}px`;
       body.style.left = "0";
       body.style.right = "0";
       body.style.width = "100%";
