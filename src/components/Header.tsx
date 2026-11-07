@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { AnimatePresence, motion, useScroll, useSpring } from "framer-motion";
 import { ArrowUpRight, Download, Menu, Moon, Sun, X } from "lucide-react";
 import { navLinks, profile, socials } from "../data/site";
-import { scrollToId, scrollToTop, setScrollLock } from "../lib/scroll";
+import { scrollToId, scrollToTop } from "../lib/scroll";
 import { useActiveSection, useScrolled } from "../lib/useActiveSection";
 import { useTheme } from "../lib/useTheme";
 import { useIntro } from "../lib/intro";
@@ -70,14 +70,10 @@ export default function Header() {
     mass: 0.3,
   });
 
-  useEffect(() => {
-    setScrollLock(menuOpen, "mobile-menu");
-    return () => setScrollLock(false, "mobile-menu");
-  }, [menuOpen]);
-
   const go = (id: string) => {
     setMenuOpen(false);
-    window.setTimeout(() => scrollToId(id), menuOpen ? 260 : 0);
+    // Let AnimatePresence remove the fixed menu layer before moving the page.
+    window.setTimeout(() => scrollToId(id), menuOpen ? 380 : 0);
   };
 
   return (

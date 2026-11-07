@@ -14,13 +14,20 @@ export function getLenis() {
 export function scrollToId(id: string, offset = -84) {
   const el = document.getElementById(id);
   if (!el) return;
+  const target = el.getBoundingClientRect().top + window.scrollY + offset;
+  const coarse = isCoarsePointer();
+
+  if (window.history?.replaceState) {
+    window.history.replaceState(null, "", `#${id}`);
+  }
+
   if (instance) {
     instance.scrollTo(el, { offset, duration: 1.35 });
+  } else if (coarse) {
+    // Native scrolling avoids Android Chrome gesture/animation conflicts.
+    window.scrollTo({ top: target, behavior: "smooth" });
   } else {
-    window.scrollTo({
-      top: el.getBoundingClientRect().top + window.scrollY + offset,
-      behavior: "smooth",
-    });
+    window.scrollTo({ top: target, behavior: "smooth" });
   }
 }
 
