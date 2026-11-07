@@ -6,7 +6,10 @@ import { setLenis } from "../lib/scroll";
 export default function SmoothScroll() {
   useEffect(() => {
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduce) return;
+    const coarse = window.matchMedia("(pointer: coarse)").matches;
+    // Native scrolling is more reliable on iOS/Android, especially when a
+    // phone browser is displaying the desktop site layout.
+    if (reduce || coarse) return;
 
     const lenis = new Lenis({
       duration: 0.9,

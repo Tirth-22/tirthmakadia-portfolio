@@ -125,6 +125,8 @@
     overscroll-behavior: none;
     /* Belt-and-braces: no sideways panning from stray absolute children. */
     overflow-x: hidden;
+    overflow-y: auto;
+    touch-action: pan-y;
   }
 
   body {
@@ -133,10 +135,16 @@
     font-family: var(--font-sans);
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
     overflow-x: hidden;
+    overflow-y: auto;
+    touch-action: pan-y;
     overscroll-behavior-y: none;
     transition: background-color 0.6s ease, color 0.4s ease;
     /* A long email / URL must wrap instead of widening the document. */
     overflow-wrap: break-word;
+  }
+
+  #root {
+    min-height: 100%;
   }
 
   /* Never let embedded media push the layout sideways. */
@@ -550,6 +558,12 @@
     line-height: 1.75;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
+  }
+
+  /* Keep horizontally scrollable data views usable on touch screens while
+     the document itself remains constrained to vertical panning. */
+  .overflow-x-auto {
+    touch-action: pan-x pan-y;
   }
 
   /* Modal panel: viewport-height fallback first, then the small viewport
