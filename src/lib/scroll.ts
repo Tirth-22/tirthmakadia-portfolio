@@ -38,7 +38,7 @@ export function scrollToTop() {
    and restore the scroll offset — and Lenis' own scroll value — on unlock.
    Desktop keeps the cheap overflow lock so the scrollbar never shifts.
 ------------------------------------------------------------------ */
-let locks = 0;
+const scrollLocks = new Set<string>();
 let savedScrollY = 0;
 
 const isCoarsePointer = () =>
@@ -57,7 +57,7 @@ const pageZoom = () => {
   return Number.isFinite(z) && z > 0 ? z : 1;
 };
 
-export function setScrollLock(locked: boolean) {
+export function setScrollLock(locked: boolean, key = "default") {
   window.dispatchEvent(new CustomEvent("tm-modal", { detail: locked }));
 
   const body = document.body;
@@ -65,8 +65,10 @@ export function setScrollLock(locked: boolean) {
   if (!body || !html) return;
 
   if (locked) {
-    locks += 1;
-    if (locks > 1) return;
+    if (scrollLocks.has(key)) return;
+    const wasUnlocked = scrollLocks.size === 0;
+    scrollLocks.add(key);
+    if (!wasUnlocked) return;
     savedScrollY = window.scrollY || window.pageYOffset || 0;
     body.style.overflow = "hidden";
     html.style.overflow = "hidden";
@@ -79,8 +81,7 @@ export function setScrollLock(locked: boolean) {
       body.style.width = "100%";
     }
   } else {
-    locks = Math.max(0, locks - 1);
-    if (locks > 0) return;
+    if (!scrollLocks.delete(key) || scrollLocks.size > 0) return;
     body.style.overflow = "";
     html.style.overflow = "";
     if (body.style.position === "fixed") {

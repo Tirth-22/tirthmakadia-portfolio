@@ -45,7 +45,7 @@ export function IntroProvider({ children }: { children: ReactNode }) {
 
   const complete = useCallback(() => {
     setPhase("done");
-    setScrollLock(false);
+    setScrollLock(false, "intro");
   }, []);
 
   const replay = useCallback(() => {
@@ -54,7 +54,7 @@ export function IntroProvider({ children }: { children: ReactNode }) {
     } catch {
       /* noop */
     }
-    setScrollLock(true);
+    setScrollLock(true, "intro");
     window.scrollTo({ top: 0, behavior: "instant" });
     setPhase("intro");
   }, []);

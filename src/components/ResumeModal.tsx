@@ -33,14 +33,17 @@ export default function ResumeModal() {
   const embedPdf = useMemo(canEmbedPdf, []);
 
   useEffect(() => {
-    setScrollLock(open);
-    if (!open) return;
+    setScrollLock(open, "resume-modal");
+    if (!open) return () => setScrollLock(false, "resume-modal");
 
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") setOpen(false);
     };
     window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      setScrollLock(false, "resume-modal");
+    };
   }, [open, setOpen]);
 
   return (

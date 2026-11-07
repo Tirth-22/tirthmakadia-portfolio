@@ -28,10 +28,10 @@ export default function IntroLoader() {
 
   useEffect(() => {
     if (done) return;
-    setScrollLock(true);
+    setScrollLock(true, "intro");
     document.documentElement.classList.add("tm-intro");
     return () => {
-      setScrollLock(false);
+      setScrollLock(false, "intro");
       document.documentElement.classList.remove("tm-intro");
     };
   }, [done]);

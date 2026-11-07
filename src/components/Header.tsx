@@ -71,8 +71,8 @@ export default function Header() {
   });
 
   useEffect(() => {
-    setScrollLock(menuOpen);
-    return () => setScrollLock(false);
+    setScrollLock(menuOpen, "mobile-menu");
+    return () => setScrollLock(false, "mobile-menu");
   }, [menuOpen]);
 
   const go = (id: string) => {
